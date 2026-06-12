@@ -1,0 +1,26 @@
+grupo: Thiago, Esteban.
+Seleccionar proyecto: Desarrollar un fixture digital de la FIFA World Cup 2026.
+104 encuentros.
+El usuario completara el resultado y los encuentros de 8vos en adelante inclusive ( o armar los encuentros automáticamente con una api)
+(disponibilizar listado de jugadores para que el usuario anote quien hizo los goles, 
+countdown para la espera del siguiente partido.
+
+Actores: Actor principal: Usuario, consulta fixture. Registra resultados, Goleadores, visualiza llaves eliminatorias, consulta countdown.
+	Actor secundario: API de datos deportivos. Provee información de equipos, planteles de jugadores, proveer de los daots de los encuentros eliminatorios.
+
+
+entidades:
+Usuario
+Mundial
+Grupo
+Selección
+Jugador
+Partido
+Gol
+Fase
+LlaveEliminatoria
+
+APIS:
+https://mundialapi2026.rf.gd/index.php
+
+https://github.com/rezarahiminia/worldcup2026
