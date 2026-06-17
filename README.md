@@ -66,8 +66,7 @@ fifa-wc2026-tpi/
 │   ├── partidoController.js
 │   ├── goleadoresController.js
 │   └── eliminatoriasController.js
-├── vistas/
-│   ├── index.html              → Dashboard + countdown
+├── vistas/  
 │   ├── fixture.html            → 48 partidos + tabla por grupo
 │   ├── partido-detalle.html    → Registrar goles
 │   ├── goleadores.html         → Rankings
@@ -88,6 +87,7 @@ fifa-wc2026-tpi/
 │   ├── diagrama-clases.md
 │   └── diagrama-secuencia.md
 ├── main.js
+├── index.html              → Dashboard + countdown
 ├── package.json
 └── .gitignore
 ```
