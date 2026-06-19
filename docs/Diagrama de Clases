@@ -1,0 +1,142 @@
+<mxfile host="app.diagrams.net">
+  <diagram name="Página-1" id="NOCvstAUp-2WuWM4EiCY">
+    <mxGraphModel grid="1" page="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="3vkBdM7JcjbTwQZtuTy4-1" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" value="Usuario" vertex="1">
+          <mxGeometry height="190" width="160" x="130" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="3vkBdM7JcjbTwQZtuTy4-2" parent="3vkBdM7JcjbTwQZtuTy4-1" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="&lt;div&gt;+ id&lt;/div&gt;+ nombre&lt;div&gt;- password&lt;/div&gt;&lt;div&gt;+ email&lt;/div&gt;&lt;div&gt;+ progreso&lt;/div&gt;" vertex="1">
+          <mxGeometry height="94" width="160" y="26" as="geometry" />
+        </mxCell>
+        <mxCell id="3vkBdM7JcjbTwQZtuTy4-3" parent="3vkBdM7JcjbTwQZtuTy4-1" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" value="" vertex="1">
+          <mxGeometry height="8" width="160" y="120" as="geometry" />
+        </mxCell>
+        <mxCell id="3vkBdM7JcjbTwQZtuTy4-4" parent="3vkBdM7JcjbTwQZtuTy4-1" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ AnotarResultados()&lt;div&gt;+ LogIn()&lt;/div&gt;&lt;div&gt;+LogOut()&lt;/div&gt;" vertex="1">
+          <mxGeometry height="62" width="160" y="128" as="geometry" />
+        </mxCell>
+        <mxCell id="3vkBdM7JcjbTwQZtuTy4-5" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" value="Jugador" vertex="1">
+          <mxGeometry height="280" width="160" x="334" y="360" as="geometry" />
+        </mxCell>
+        <mxCell id="3vkBdM7JcjbTwQZtuTy4-6" parent="3vkBdM7JcjbTwQZtuTy4-5" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ id&lt;div&gt;+ nombreCompleto&lt;/div&gt;&lt;div&gt;+ numero&lt;/div&gt;&lt;div&gt;+ posicion&lt;/div&gt;&lt;div&gt;+ seleccion&lt;/div&gt;&lt;div&gt;+ goles&lt;/div&gt;&lt;div&gt;+ asistencias&lt;/div&gt;&lt;div&gt;+ amarillas&lt;/div&gt;&lt;div&gt;+ rojas&lt;/div&gt;" vertex="1">
+          <mxGeometry height="144" width="160" y="26" as="geometry" />
+        </mxCell>
+        <mxCell id="3vkBdM7JcjbTwQZtuTy4-7" parent="3vkBdM7JcjbTwQZtuTy4-5" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" value="" vertex="1">
+          <mxGeometry height="8" width="160" y="170" as="geometry" />
+        </mxCell>
+        <mxCell id="3vkBdM7JcjbTwQZtuTy4-8" parent="3vkBdM7JcjbTwQZtuTy4-5" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ AgregarGol()&lt;div&gt;+ AgregarAsistencia()&lt;/div&gt;&lt;div&gt;+ AgregarAmarilla()&lt;/div&gt;&lt;div&gt;+ AgregarRoja()&lt;/div&gt;&lt;div&gt;+ SumarValla()&lt;/div&gt;&lt;div&gt;+ MostrarPosicion()&lt;/div&gt;" vertex="1">
+          <mxGeometry height="102" width="160" y="178" as="geometry" />
+        </mxCell>
+        <mxCell id="3vkBdM7JcjbTwQZtuTy4-9" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" value="Partido" vertex="1">
+          <mxGeometry height="330" width="160" x="590" y="360" as="geometry" />
+        </mxCell>
+        <mxCell id="3vkBdM7JcjbTwQZtuTy4-10" parent="3vkBdM7JcjbTwQZtuTy4-9" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ id&lt;div&gt;+ seleccionLocal&lt;/div&gt;&lt;div&gt;+ seleccionVisitante&lt;/div&gt;&lt;div&gt;+ fechaHora&lt;/div&gt;&lt;div&gt;+ estadio&lt;/div&gt;&lt;div&gt;+ arbitro&lt;/div&gt;&lt;div&gt;+ golLocal&lt;/div&gt;&lt;div&gt;+ golVisitante&lt;/div&gt;&lt;div&gt;+ goles&lt;/div&gt;&lt;div&gt;+ estado&lt;/div&gt;&lt;div&gt;+ fase&lt;/div&gt;&lt;div&gt;+ grupo&lt;/div&gt;" vertex="1">
+          <mxGeometry height="184" width="160" y="26" as="geometry" />
+        </mxCell>
+        <mxCell id="3vkBdM7JcjbTwQZtuTy4-11" parent="3vkBdM7JcjbTwQZtuTy4-9" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" value="" vertex="1">
+          <mxGeometry height="8" width="160" y="210" as="geometry" />
+        </mxCell>
+        <mxCell id="3vkBdM7JcjbTwQZtuTy4-12" parent="3vkBdM7JcjbTwQZtuTy4-9" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ RegistrarGol()&lt;div&gt;+ ObtenerGoles()&lt;/div&gt;&lt;div&gt;+ ObtenerResultado()&lt;/div&gt;&lt;div&gt;+ ObtenerPuntosLocal()&lt;/div&gt;&lt;div&gt;+ ObtenerPuntosVisitante()&lt;/div&gt;&lt;div&gt;+ IniciarPartido()&lt;/div&gt;&lt;div&gt;+ FinalizarPartido()&lt;/div&gt;" vertex="1">
+          <mxGeometry height="112" width="160" y="218" as="geometry" />
+        </mxCell>
+        <mxCell id="3vkBdM7JcjbTwQZtuTy4-13" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" value="Seleccion" vertex="1">
+          <mxGeometry height="200" width="160" x="100" y="310" as="geometry" />
+        </mxCell>
+        <mxCell id="3vkBdM7JcjbTwQZtuTy4-14" parent="3vkBdM7JcjbTwQZtuTy4-13" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ id&lt;div&gt;+ nombre&lt;/div&gt;&lt;div&gt;+ bandera&lt;/div&gt;&lt;div&gt;+ entrenador&lt;/div&gt;&lt;div&gt;+ jugadores&lt;/div&gt;&lt;div&gt;+ grupo&lt;/div&gt;" vertex="1">
+          <mxGeometry height="94" width="160" y="26" as="geometry" />
+        </mxCell>
+        <mxCell id="3vkBdM7JcjbTwQZtuTy4-15" parent="3vkBdM7JcjbTwQZtuTy4-13" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" value="" vertex="1">
+          <mxGeometry height="8" width="160" y="120" as="geometry" />
+        </mxCell>
+        <mxCell id="3vkBdM7JcjbTwQZtuTy4-16" parent="3vkBdM7JcjbTwQZtuTy4-13" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ AgregarJugador()&lt;div&gt;+ ObtenerJugador()&lt;/div&gt;&lt;div&gt;&lt;div&gt;+ ListarPlantilla()&lt;/div&gt;&lt;div&gt;+ CalcularStats()&lt;/div&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="72" width="160" y="128" as="geometry" />
+        </mxCell>
+        <mxCell id="rx4KfcEJyR0cR4pVQB0k-1" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" value="Mundial" vertex="1">
+          <mxGeometry height="300" width="160" x="360" y="20" as="geometry" />
+        </mxCell>
+        <mxCell id="rx4KfcEJyR0cR4pVQB0k-2" parent="rx4KfcEJyR0cR4pVQB0k-1" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ nombre&lt;div&gt;+ año&lt;/div&gt;&lt;div&gt;+paisesAnfitriones&lt;/div&gt;&lt;div&gt;+ grupos&lt;/div&gt;&lt;div&gt;+ fases&lt;/div&gt;&lt;div&gt;+ selecciones&lt;/div&gt;" vertex="1">
+          <mxGeometry height="94" width="160" y="26" as="geometry" />
+        </mxCell>
+        <mxCell id="rx4KfcEJyR0cR4pVQB0k-3" parent="rx4KfcEJyR0cR4pVQB0k-1" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" value="" vertex="1">
+          <mxGeometry height="8" width="160" y="120" as="geometry" />
+        </mxCell>
+        <mxCell id="rx4KfcEJyR0cR4pVQB0k-4" parent="rx4KfcEJyR0cR4pVQB0k-1" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ AgregarGrupo()&lt;div&gt;+ ObtenerGrupo()&lt;/div&gt;&lt;div&gt;+ AgregarFase()&lt;/div&gt;&lt;div&gt;+ ObtenerFase()&lt;/div&gt;&lt;div&gt;+ ObtenerTodosPartidos()&lt;/div&gt;&lt;div&gt;+ ObtenerSiguientePartido()&lt;/div&gt;&lt;div&gt;+ CalcTiempoSigPartido()&lt;/div&gt;&lt;div&gt;+ ObtenerTopGoleadores()&lt;/div&gt;&lt;div&gt;+ ObtenerTopAsistidores()&lt;/div&gt;&lt;div&gt;+ ObtenerVallasInvictas()&lt;/div&gt;&lt;div&gt;+ CargarDatos()&lt;/div&gt;" vertex="1">
+          <mxGeometry height="172" width="160" y="128" as="geometry" />
+        </mxCell>
+        <mxCell id="KRFhld6z7xdyq4AFqyTk-3" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" value="Grupo" vertex="1">
+          <mxGeometry height="210" width="160" x="600" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="KRFhld6z7xdyq4AFqyTk-4" parent="KRFhld6z7xdyq4AFqyTk-3" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ id&lt;div&gt;+ nombre&lt;/div&gt;&lt;div&gt;+ selecciones&lt;/div&gt;&lt;div&gt;+ partidos&lt;/div&gt;" vertex="1">
+          <mxGeometry height="94" width="160" y="26" as="geometry" />
+        </mxCell>
+        <mxCell id="KRFhld6z7xdyq4AFqyTk-5" parent="KRFhld6z7xdyq4AFqyTk-3" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" value="" vertex="1">
+          <mxGeometry height="8" width="160" y="120" as="geometry" />
+        </mxCell>
+        <mxCell id="KRFhld6z7xdyq4AFqyTk-6" parent="KRFhld6z7xdyq4AFqyTk-3" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ AgregarSeleccion()&lt;div&gt;+ AgregarPartido()&lt;/div&gt;&lt;div&gt;+ CalcularTabla()&lt;/div&gt;&lt;div&gt;+ ObtenerClasificados()&lt;/div&gt;&lt;div&gt;+ MostrarPartidos()&lt;/div&gt;" vertex="1">
+          <mxGeometry height="82" width="160" y="128" as="geometry" />
+        </mxCell>
+        <mxCell id="KRFhld6z7xdyq4AFqyTk-7" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" value="Gol" vertex="1">
+          <mxGeometry height="150" width="160" x="60" y="650" as="geometry" />
+        </mxCell>
+        <mxCell id="KRFhld6z7xdyq4AFqyTk-8" parent="KRFhld6z7xdyq4AFqyTk-7" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ id&lt;div&gt;+ jugador&lt;/div&gt;&lt;div&gt;+ minuto&lt;/div&gt;&lt;div&gt;+ etapa&lt;/div&gt;&lt;div&gt;+ asistidor&lt;/div&gt;" vertex="1">
+          <mxGeometry height="84" width="160" y="26" as="geometry" />
+        </mxCell>
+        <mxCell id="KRFhld6z7xdyq4AFqyTk-9" parent="KRFhld6z7xdyq4AFqyTk-7" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" value="" vertex="1">
+          <mxGeometry height="8" width="160" y="110" as="geometry" />
+        </mxCell>
+        <mxCell id="KRFhld6z7xdyq4AFqyTk-10" parent="KRFhld6z7xdyq4AFqyTk-7" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ MostrarDescripcion" vertex="1">
+          <mxGeometry height="32" width="160" y="118" as="geometry" />
+        </mxCell>
+        <mxCell id="KRFhld6z7xdyq4AFqyTk-11" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" value="Fase" vertex="1">
+          <mxGeometry height="240" width="180" x="290" y="700" as="geometry" />
+        </mxCell>
+        <mxCell id="KRFhld6z7xdyq4AFqyTk-12" parent="KRFhld6z7xdyq4AFqyTk-11" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ id&lt;div&gt;+ nombre&lt;/div&gt;&lt;div&gt;+ tipo&lt;/div&gt;&lt;div&gt;+ partidos&lt;/div&gt;&lt;div&gt;+ fechaInicio&lt;/div&gt;&lt;div&gt;+ fechaFin&lt;/div&gt;" vertex="1">
+          <mxGeometry height="94" width="180" y="26" as="geometry" />
+        </mxCell>
+        <mxCell id="KRFhld6z7xdyq4AFqyTk-13" parent="KRFhld6z7xdyq4AFqyTk-11" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" value="" vertex="1">
+          <mxGeometry height="8" width="180" y="120" as="geometry" />
+        </mxCell>
+        <mxCell id="KRFhld6z7xdyq4AFqyTk-14" parent="KRFhld6z7xdyq4AFqyTk-11" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ AgregarPartido()&lt;div&gt;+ ObtenerPartidos()&lt;/div&gt;&lt;div&gt;+ ObtenerPartidosPendientes()&lt;/div&gt;&lt;div&gt;+ ObtenerPartidosFinalizados()&lt;/div&gt;&lt;div&gt;+ CheckEstadoFase()&lt;/div&gt;" vertex="1">
+          <mxGeometry height="112" width="180" y="128" as="geometry" />
+        </mxCell>
+        <mxCell id="KRFhld6z7xdyq4AFqyTk-17" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" value="Eliminatoria" vertex="1">
+          <mxGeometry height="210" width="160" x="570" y="732" as="geometry" />
+        </mxCell>
+        <mxCell id="KRFhld6z7xdyq4AFqyTk-18" parent="KRFhld6z7xdyq4AFqyTk-17" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ id&lt;div&gt;+ nombre&lt;/div&gt;&lt;div&gt;+ equipo1&lt;/div&gt;&lt;div&gt;+ equipo2&lt;/div&gt;&lt;div&gt;+ partido&lt;/div&gt;&lt;div&gt;+ ganador&lt;/div&gt;&lt;div&gt;+ fase&lt;/div&gt;" vertex="1">
+          <mxGeometry height="114" width="160" y="26" as="geometry" />
+        </mxCell>
+        <mxCell id="KRFhld6z7xdyq4AFqyTk-19" parent="KRFhld6z7xdyq4AFqyTk-17" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" value="" vertex="1">
+          <mxGeometry height="8" width="160" y="140" as="geometry" />
+        </mxCell>
+        <mxCell id="KRFhld6z7xdyq4AFqyTk-20" parent="KRFhld6z7xdyq4AFqyTk-17" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ AsignarPartido()&lt;div&gt;+ MostrarGanador()&lt;/div&gt;&lt;div&gt;+ MostrarResumen()&lt;/div&gt;" vertex="1">
+          <mxGeometry height="62" width="160" y="148" as="geometry" />
+        </mxCell>
+        <mxCell id="KRFhld6z7xdyq4AFqyTk-21" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" value="Tabla" vertex="1">
+          <mxGeometry height="140" width="140" x="70" y="959" as="geometry" />
+        </mxCell>
+        <mxCell id="KRFhld6z7xdyq4AFqyTk-22" parent="KRFhld6z7xdyq4AFqyTk-21" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ grupo&lt;div&gt;+ registros&lt;/div&gt;" vertex="1">
+          <mxGeometry height="44" width="140" y="26" as="geometry" />
+        </mxCell>
+        <mxCell id="KRFhld6z7xdyq4AFqyTk-23" parent="KRFhld6z7xdyq4AFqyTk-21" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" value="" vertex="1">
+          <mxGeometry height="8" width="140" y="70" as="geometry" />
+        </mxCell>
+        <mxCell id="KRFhld6z7xdyq4AFqyTk-24" parent="KRFhld6z7xdyq4AFqyTk-21" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ ObtenerRegistro()&lt;div&gt;+ Calcular()&lt;/div&gt;&lt;div&gt;+ MostrarOrden()&lt;/div&gt;" vertex="1">
+          <mxGeometry height="62" width="140" y="78" as="geometry" />
+        </mxCell>
+        <mxCell id="KRFhld6z7xdyq4AFqyTk-25" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" value="RegistroTabla" vertex="1">
+          <mxGeometry height="220" width="140" x="300" y="969" as="geometry" />
+        </mxCell>
+        <mxCell id="KRFhld6z7xdyq4AFqyTk-26" parent="KRFhld6z7xdyq4AFqyTk-25" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ seleccion&lt;div&gt;+ partidosJugados&lt;/div&gt;&lt;div&gt;+ victorias&lt;/div&gt;&lt;div&gt;+ empates&lt;/div&gt;&lt;div&gt;+ derrotas&lt;/div&gt;&lt;div&gt;+ golesAFavor&lt;/div&gt;&lt;div&gt;+ golesEnContra&lt;/div&gt;" vertex="1">
+          <mxGeometry height="114" width="140" y="26" as="geometry" />
+        </mxCell>
+        <mxCell id="KRFhld6z7xdyq4AFqyTk-27" parent="KRFhld6z7xdyq4AFqyTk-25" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" value="" vertex="1">
+          <mxGeometry height="8" width="140" y="140" as="geometry" />
+        </mxCell>
+        <mxCell id="KRFhld6z7xdyq4AFqyTk-28" parent="KRFhld6z7xdyq4AFqyTk-25" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" value="+ RegistrarResultado()&lt;div&gt;+ CalcularDiferencia()&lt;/div&gt;&lt;div&gt;+ CalcularPuntos()&lt;/div&gt;&lt;div&gt;+ Reiniciar()&lt;/div&gt;" vertex="1">
+          <mxGeometry height="72" width="140" y="148" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
