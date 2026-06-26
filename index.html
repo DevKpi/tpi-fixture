@@ -7,7 +7,75 @@
     <link rel="stylesheet" href="./views/styles/styles.css">
 </head>
 <body>
+ <header>
+    <h1>FIFA World Cup <span>2026</span></h1>
+    <nav>
+      <ul>
+        <li><a href="index.html" class="active">Inicio</a></li>
+        <li><a href="fixture.html">Fixture</a></li>
+        <li><a href="goleadores.html">Goleadores</a></li>
+        <li><a href="llaves-eliminatorias.html">Llaves</a></li>
+      </ul>
+    </nav>
+  </header>
 
+  <main>
+    <div class="card">
+      <h2>Próximo partido</h2>
+      <div id="proximo-partido">
+        <p>Cargando...</p>
+      </div>
+      <div class="countdown" id="countdown">
+        <div class="countdown-item">
+          <div class="valor" id="cd-dias">--</div>
+          <div class="label">Días</div>
+        </div>
+        <div class="countdown-item">
+          <div class="valor" id="cd-horas">--</div>
+          <div class="label">Horas</div>
+        </div>
+        <div class="countdown-item">
+          <div class="valor" id="cd-minutos">--</div>
+          <div class="label">Min</div>
+        </div>
+        <div class="countdown-item">
+          <div class="valor" id="cd-segundos">--</div>
+          <div class="label">Seg</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-3">
+      <div class="card">
+        <h2>Resumen del torneo</h2>
+        <p>Total de partidos: <strong id="total-partidos">--</strong></p>
+        <p>Partidos jugados: <strong id="partidos-jugados">--</strong></p>
+        <p>Grupos: <strong>8 (A - H)</strong></p>
+        <p>Selecciones: <strong>32</strong></p>
+      </div>
+
+      <div class="card">
+        <h2>Accesos rápidos</h2>
+        <p><a href="./views/fixture.html">Ver fixture completo →</a></p>
+        <p><a href="./views/tops.html">Tabla de goleadores →</a></p>
+        <p><a href="./views/elimination-bracket.html">Llaves eliminatorias →</a></p>
+      </div>
+
+      <div class="card">
+        <h2>Sedes anfitrionas</h2>
+        <p>🇲🇽 México</p>
+        <p>🇺🇸 Estados Unidos</p>
+        <p>🇨🇦 Canadá</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Resultados recientes</h2>
+      <div id="resultados-recientes">
+        <p>Cargando...</p>
+      </div>
+    </div>
+  </main>
 
     
     <script type="module" src="/main.js"></script>
