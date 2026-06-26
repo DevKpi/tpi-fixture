@@ -72,6 +72,7 @@ fifa-wc2026-tpi/
 │   ├── fixture.html            → 48 partidos + tabla por grupo
 │   ├── match-detail.html    → Registrar goles
 │   ├── tops.html         → Rankings
+│   ├── login.html         → login para saber a quien se le guarda el progreso
 │   ├── elimination-bracket.html → Árbol de playoff (Fase 2)
 │   └── styles/styles.css
 ├── data/
