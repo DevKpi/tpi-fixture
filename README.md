@@ -48,33 +48,35 @@ O con la extensión **Live Server** de VS Code.
 ```
 fifa-wc2026-tpi/
 ├── modelos/
-│   ├── Usuario.js
+│   ├── Users.js
 │   ├── Mundial.js            ← coordinador principal
-│   ├── Grupo.js
-│   ├── Selección.js
-│   ├── Jugador.js
-│   ├── Partido.js
-│   ├── Gol.js
+│   ├── Group.js
+│   ├── CountryTeams.js
+│   ├── Player.js
+│   ├── Match.js
+│   ├── Goal.js
 │   ├── Fase.js
 │   ├── LlaveEliminatoria.js  
 │   ├── Eliminatorias.js      ← motor del árbol de playoff
-│   ├── Tabla.js
-│   └── RegistroTabla.js
+│   ├── Table.js
+│   └── TableRegister.js
 ├── controladores/
-│   ├── mundialController.js
-│   ├── grupoController.js
-│   ├── partidoController.js
-│   ├── goleadoresController.js
-│   └── eliminatoriasController.js
+│   ├── MundialController.js
+│   ├── GroupController.js
+│   ├── MatchController.js
+│   ├── CleanSheet.js
+│   ├── GoalsController.js
+│   ├── AssistController.js
+│   └── MatchController.js
 ├── vistas/  
 │   ├── fixture.html            → 48 partidos + tabla por grupo
-│   ├── partido-detalle.html    → Registrar goles
-│   ├── goleadores.html         → Rankings
-│   ├── llaves-eliminatorias.html → Árbol de playoff (Fase 2)
-│   └── styles.css
-├── datos/
-│   ├── fixture-completa.json   (48 partidos de grupos)
-│   └── equipos.json            (32 selecciones × 23 jugadores)
+│   ├── match-detail.html    → Registrar goles
+│   ├── tops.html         → Rankings
+│   ├── elimination-bracket.html → Árbol de playoff (Fase 2)
+│   └── styles/styles.css
+├── data/
+│   ├── full-fixture.json   (104 partidos en total)
+│   └── teams.json            (48 selecciones × 23 jugadores)
 ├── servicios/
 │   └── apiService.js
 ├── test/
@@ -84,8 +86,9 @@ fifa-wc2026-tpi/
 │   ├── Mundial.test.js
 │   └── Eliminatorias.test.js 
 ├── docs/
-│   ├── diagrama-clases.md
-│   └── diagrama-secuencia.md
+│   ├── diagram-class.md
+│   ├── diagram-class.png
+│   └── diagram-sequence.md
 ├── main.js
 ├── index.html              → Dashboard + countdown
 ├── package.json
