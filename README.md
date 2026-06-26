@@ -47,7 +47,7 @@ O con la extensión **Live Server** de VS Code.
 
 ```
 fifa-wc2026-tpi/
-├── modelos/
+├── models/
 │   ├── Users.js
 │   ├── Mundial.js            ← coordinador principal
 │   ├── Group.js
@@ -60,7 +60,7 @@ fifa-wc2026-tpi/
 │   ├── Eliminatorias.js      ← motor del árbol de playoff
 │   ├── Table.js
 │   └── TableRegister.js
-├── controladores/
+├── controllers/
 │   ├── MundialController.js
 │   ├── GroupController.js
 │   ├── MatchController.js
@@ -68,7 +68,7 @@ fifa-wc2026-tpi/
 │   ├── GoalsController.js
 │   ├── AssistController.js
 │   └── MatchController.js
-├── vistas/  
+├── views/  
 │   ├── fixture.html            → 48 partidos + tabla por grupo
 │   ├── match-detail.html    → Registrar goles
 │   ├── tops.html         → Rankings
@@ -77,7 +77,7 @@ fifa-wc2026-tpi/
 ├── data/
 │   ├── full-fixture.json   (104 partidos en total)
 │   └── teams.json            (48 selecciones × 23 jugadores)
-├── servicios/
+├── services/
 │   └── apiService.js
 ├── test/
 │   ├── Gol.test.js
