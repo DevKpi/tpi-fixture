@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Iniciar Sesión - FIFA World Cup 2026</title>
+  <link rel="stylesheet" href="./styles/styles.css">
+  <style>
+    .login-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 70vh;
+    }
+
+    .login-card {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius);
+      padding: 2.5rem;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+      text-align: center;
+    }
+
+    .logo-glow {
+      color: var(--color-accent);
+      font-size: 2rem;
+      font-weight: 800;
+      margin-bottom: 1.5rem;
+    }
+
+    .logo-glow span {
+      color: #fff;
+    }
+
+    .form-group {
+      text-align: left;
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.85rem;
+      color: var(--color-text-muted);
+      margin-bottom: 0.5rem;
+    }
+
+    .input-field {
+      width: 100%;
+      background: var(--color-bg);
+      border: 1px solid var(--color-border);
+      color: #fff;
+      padding: 0.75rem;
+      border-radius: var(--radius);
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .input-field:focus {
+      border-color: var(--color-accent);
+    }
+
+    .btn-login {
+      width: 100%;
+      background: var(--color-primary);
+      color: #fff;
+      border: none;
+      padding: 0.75rem;
+      border-radius: var(--radius);
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s;
+      margin-top: 0.5rem;
+    }
+
+    .btn-login:hover {
+      background: var(--color-primary-dark);
+    }
+
+    .user-info-text {
+      color: var(--color-text-muted);
+      font-size: 0.85rem;
+      margin-top: 1.5rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>FIFA World Cup <span>2026</span></h1>
+    <nav>
+      <ul>
+        <li><a href="../index.html">Inicio</a></li>
+        <li><a href="fixture.html">Fixture</a></li>
+        <li><a href="tops.html">Goleadores</a></li>
+        <li><a href="elimination-bracket.html">Llaves</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <div class="login-container">
+      <div class="login-card">
+        <div class="logo-glow">FIFA <span>2026</span></div>
+        <h2 style="margin-bottom: 0.5rem; font-size: 1.25rem;">Panel del Fixture</h2>
+        <p style="color: var(--color-text-muted); font-size: 0.85rem; margin-bottom: 2rem;">
+          Ingresa tu nombre para guardar tus predicciones del torneo.
+        </p>
+
+        <form id="login-form">
+          <div class="form-group">
+            <label for="username">Nombre de Usuario</label>
+            <input type="text" id="username" class="input-field" placeholder="Ingresa tu nombre..." required>
+          </div>
+          <button type="submit" class="btn-login">Ingresar</button>
+        </form>
+
+        <div id="logged-user-status" class="user-info-text" style="display: none;">
+          Actualmente ingresado como: <strong id="logged-username" style="color: var(--color-accent);"></strong>
+          <br>
+          <a href="#" id="btn-logout" style="color: var(--color-danger); display: inline-block; margin-top: 0.5rem;">Cerrar Sesión</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script type="module">
+    document.addEventListener('DOMContentLoaded', () => {
+      const currentUser = localStorage.getItem('worldcup2026_user');
+      const loginForm = document.getElementById('login-form');
+      const statusDiv = document.getElementById('logged-user-status');
+      const usernameSpan = document.getElementById('logged-username');
+      const logoutBtn = document.getElementById('btn-logout');
+
+      if (currentUser) {
+        loginForm.style.display = 'none';
+        statusDiv.style.display = 'block';
+        usernameSpan.textContent = currentUser;
+      }
+
+      loginForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const username = document.getElementById('username').value.trim();
+        if (username) {
+          localStorage.setItem('worldcup2026_user', username);
+          alert(`¡Bienvenido, ${username}! Tus cambios y predicciones ahora se guardarán.`);
+          window.location.href = '../index.html';
+        }
+      });
+
+      logoutBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        localStorage.removeItem('worldcup2026_user');
+        alert('Sesión cerrada.');
+        window.location.reload();
+      });
+    });
+  </script>
+</body>
+</html>

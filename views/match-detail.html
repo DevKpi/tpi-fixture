@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Detalle del Partido - FIFA World Cup 2026</title>
+  <link rel="stylesheet" href="./styles/styles.css">
+  <style>
+    .detail-card {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius);
+      padding: 2.5rem;
+      max-width: 600px;
+      margin: 2rem auto;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+      text-align: center;
+    }
+
+    .detail-header {
+      font-size: 0.8rem;
+      color: var(--color-accent);
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 1px;
+      margin-bottom: 1.5rem;
+    }
+
+    .teams-vs-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 2rem 0;
+      gap: 1.5rem;
+    }
+
+    .team-block {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.8rem;
+    }
+
+    .team-flag-large {
+      width: 80px;
+      height: 53px;
+      object-fit: cover;
+      border-radius: var(--radius);
+      border: 2px solid var(--color-border);
+      box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+    }
+
+    .team-name-large {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .score-display-large {
+      font-size: 3rem;
+      font-weight: 800;
+      color: var(--color-accent);
+      padding: 0 1.5rem;
+      min-width: 100px;
+      text-align: center;
+    }
+
+    .meta-list {
+      text-align: left;
+      background: var(--color-bg);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius);
+      padding: 1.25rem;
+      margin-top: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+      font-size: 0.9rem;
+    }
+
+    .meta-item {
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--color-surface-light);
+      padding-bottom: 0.4rem;
+    }
+
+    .meta-item:last-child {
+      border: none;
+      padding-bottom: 0;
+    }
+
+    .meta-label {
+      color: var(--color-text-muted);
+      font-weight: 600;
+    }
+
+    .meta-value {
+      color: var(--color-text);
+      font-weight: 700;
+    }
+
+    .scorers-container {
+      margin-top: 1.5rem;
+      text-align: left;
+      font-size: 0.85rem;
+    }
+
+    .scorers-title {
+      font-weight: 700;
+      color: var(--color-accent);
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+      border-bottom: 1px solid var(--color-border);
+      padding-bottom: 0.2rem;
+    }
+
+    .btn-back {
+      background: var(--color-surface-light);
+      color: var(--color-text);
+      border: 1px solid var(--color-border);
+      padding: 0.6rem 1.2rem;
+      border-radius: var(--radius);
+      cursor: pointer;
+      font-weight: 600;
+      display: inline-block;
+      margin-top: 1.5rem;
+      transition: all 0.2s;
+    }
+
+    .btn-back:hover {
+      background: var(--color-primary);
+      border-color: var(--color-primary);
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>FIFA World Cup <span>2026</span></h1>
+    <nav>
+      <ul>
+        <li><a href="../index.html">Inicio</a></li>
+        <li><a href="fixture.html">Fixture</a></li>
+        <li><a href="tops.html">Goleadores</a></li>
+        <li><a href="elimination-bracket.html">Llaves</a></li>
+        <li><a href="login.html" id="nav-login">Login</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <div id="detail-render-target">
+      <div style="text-align: center; padding: 3rem;">
+        <p>Cargando detalle del partido...</p>
+      </div>
+    </div>
+  </main>
+
+  <script type="module">
+    import APIService from '../services/apiService.js';
+    import MatchController from '../controllers/MatchController.js';
+
+    const matchController = new MatchController();
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      await matchController.init();
+      renderMatchDetail();
+    });
+
+    async function renderMatchDetail() {
+      const container = document.getElementById('detail-render-target');
+      if (!container) return;
+
+      // Obtener ID del partido desde los parámetros de la URL
+      const urlParams = new URLSearchParams(window.location.search);
+      const matchId = urlParams.get('id');
+
+      if (!matchId) {
+        container.innerHTML = `
+          <div class="detail-card">
+            <h2 style="color: var(--color-danger);">Error</h2>
+            <p>No se especificó un ID de partido válido.</p>
+            <a href="fixture.html" class="btn-back">Volver al Fixture</a>
+          </div>
+        `;
+        return;
+      }
+
+      // Obtener información del partido fresco
+      const match = await APIService.getMatchById(matchId);
+      if (!match) {
+        container.innerHTML = `
+          <div class="detail-card">
+            <h2 style="color: var(--color-danger);">No encontrado</h2>
+            <p>El partido con ID #${matchId} no existe.</p>
+            <a href="fixture.html" class="btn-back">Volver al Fixture</a>
+          </div>
+        `;
+        return;
+      }
+
+      const allTeams = await APIService.getAllTeams();
+      const homeTeamInfo = allTeams.find(t => String(t.id) === String(match.home_team_id));
+      const awayTeamInfo = allTeams.find(t => String(t.id) === String(match.away_team_id));
+
+      const homeFlag = homeTeamInfo ? homeTeamInfo.flag : 'https://flagcdn.com/w80/un.png';
+      const awayFlag = awayTeamInfo ? awayTeamInfo.flag : 'https://flagcdn.com/w80/un.png';
+
+      const homeName = match.home_team_name_en || match.home_team_label || 'Por confirmar';
+      const awayName = match.away_team_name_en || match.away_team_label || 'Por confirmar';
+
+      const finished = match.finished === 'TRUE' || match.finished === true || match.finished === 'true';
+      const scoreHTML = finished 
+        ? `${match.home_score} - ${match.away_score}`
+        : 'VS';
+
+      const homeScorersList = (match.home_scorers && match.home_scorers !== 'null') 
+        ? match.home_scorers.replace(/[{}"“”]/g, '').split(',') 
+        : [];
+      const awayScorersList = (match.away_scorers && match.away_scorers !== 'null') 
+        ? match.away_scorers.replace(/[{}"“”]/g, '').split(',') 
+        : [];
+
+      container.innerHTML = `
+        <div class="detail-card">
+          <div class="detail-header">
+            ${matchController.getPhaseName(match.type)} — Partido #${match.id}
+          </div>
+
+          <div class="teams-vs-container">
+            <div class="team-block">
+              <img class="team-flag-large" src="${homeFlag}" alt="">
+              <span class="team-name-large">${homeName}</span>
+            </div>
+            <div class="score-display-large">
+              ${scoreHTML}
+            </div>
+            <div class="team-block">
+              <img class="team-flag-large" src="${awayFlag}" alt="">
+              <span class="team-name-large">${awayName}</span>
+            </div>
+          </div>
+
+          <!-- Goleadores si finalizó -->
+          ${finished && (homeScorersList.length > 0 || awayScorersList.length > 0) ? `
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin: 1.5rem 0;">
+              <div class="scorers-container">
+                <div class="scorers-title">Goles ${homeName}</div>
+                ${homeScorersList.length > 0 
+                  ? homeScorersList.map(s => `<div>⚽ ${s.trim()}</div>`).join('')
+                  : '<div style="color: var(--color-text-muted);">Sin goles</div>'
+                }
+              </div>
+              <div class="scorers-container">
+                <div class="scorers-title">Goles ${awayName}</div>
+                ${awayScorersList.length > 0 
+                  ? awayScorersList.map(s => `<div>⚽ ${s.trim()}</div>`).join('')
+                  : '<div style="color: var(--color-text-muted);">Sin goles</div>'
+                }
+              </div>
+            </div>
+          ` : ''}
+
+          <div class="meta-list">
+            <div class="meta-item">
+              <span class="meta-label">Estado</span>
+              <span class="meta-value" style="color: ${finished ? 'var(--color-success)' : 'var(--color-accent)'}">
+                ${finished ? 'Finalizado' : 'Pendiente'}
+              </span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">Fecha y Hora</span>
+              <span class="meta-value">${match.local_date}</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">Estadio</span>
+              <span class="meta-value">Sede #${match.stadium_id}</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">Fase</span>
+              <span class="meta-value">${matchController.getPhaseName(match.type)}</span>
+            </div>
+            ${match.group && match.group !== 'R32' && match.group !== 'R16' ? `
+              <div class="meta-item">
+                <span class="meta-label">Grupo</span>
+                <span class="meta-value">Grupo ${match.group}</span>
+              </div>
+            ` : ''}
+          </div>
+
+          <button onclick="history.back()" class="btn-back">Volver Atrás</button>
+        </div>
+      `;
+    }
+  </script>
+</body>
+</html>
