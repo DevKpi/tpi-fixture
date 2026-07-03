@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fixture de Partidos y Posiciones - FIFA World Cup 2026</title>
+  <link rel="stylesheet" href="./styles/styles.css">
+  <style>
+    /* Estilos Premium para el Fixture de Grupos */
+    .groups-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2rem;
+      margin-top: 1.5rem;
+    }
+    
+    @media (min-width: 900px) {
+      .groups-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .group-card {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .group-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid var(--color-border);
+      padding-bottom: 0.5rem;
+    }
+
+    .group-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--color-accent);
+    }
+
+    /* Tabla de posiciones */
+    .standings-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+
+    .standings-table th, 
+    .standings-table td {
+      padding: 0.5rem 0.3rem;
+      text-align: center;
+    }
+
+    .standings-table th {
+      color: var(--color-text-muted);
+      border-bottom: 1px solid var(--color-border);
+      font-weight: 600;
+    }
+
+    .standings-table td.team-cell {
+      text-align: left;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    .standings-table tr:not(:last-child) td {
+      border-bottom: 1px solid var(--color-surface-light);
+    }
+
+    .flag-icon {
+      width: 20px;
+      height: 13px;
+      object-fit: cover;
+      border-radius: 1px;
+    }
+
+    .qualify-zone {
+      background: rgba(34, 197, 94, 0.05);
+    }
+
+    .qualify-zone td:first-child {
+      border-left: 3px solid var(--color-success);
+    }
+
+    /* Partidos del grupo */
+    .matches-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+
+    .match-row {
+      background: var(--color-surface-light);
+      border-radius: 4px;
+      padding: 0.5rem 0.8rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.8rem;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: all 0.2s;
+    }
+
+    .match-row:hover {
+      border-color: var(--color-accent);
+      background: var(--color-surface);
+    }
+
+    .match-teams-flow {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-grow: 1;
+    }
+
+    .match-team {
+      width: 38%;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    .match-team.home-t {
+      text-align: right;
+    }
+
+    .match-team.away-t {
+      text-align: left;
+    }
+
+    .match-score-flow {
+      font-weight: 700;
+      font-size: 0.9rem;
+      background: var(--color-bg);
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      min-width: 45px;
+      text-align: center;
+      color: var(--color-accent);
+    }
+
+    .match-date-meta {
+      font-size: 0.65rem;
+      color: var(--color-text-muted);
+      text-align: right;
+      min-width: 70px;
+    }
+
+    /* Filtros y Controles */
+    .controls-panel {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      padding: 1rem;
+      border-radius: var(--radius);
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .filter-btn-group {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .btn-filter {
+      background: var(--color-surface-light);
+      color: var(--color-text-muted);
+      border: 1px solid var(--color-border);
+      padding: 0.4rem 0.8rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: all 0.2s;
+    }
+
+    .btn-filter:hover, 
+    .btn-filter.active {
+      background: var(--color-primary);
+      border-color: var(--color-primary);
+      color: #fff;
+    }
+
+    /* Modal Styles */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(15, 23, 42, 0.8);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-card {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius);
+      width: 90%;
+      max-width: 480px;
+      padding: 1.5rem;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+      transform: translateY(20px);
+      transition: transform 0.3s;
+    }
+
+    .modal-overlay.active .modal-card {
+      transform: translateY(0);
+    }
+
+    .modal-title {
+      font-size: 1.1rem;
+      color: var(--color-accent);
+      margin-bottom: 1.2rem;
+      border-bottom: 1px solid var(--color-border);
+      padding-bottom: 0.4rem;
+      font-weight: 700;
+    }
+
+    .modal-teams-edit {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .edit-team-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .edit-team-info {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      font-weight: 600;
+    }
+
+    .score-input {
+      background: var(--color-bg);
+      border: 1px solid var(--color-border);
+      color: var(--color-text);
+      width: 60px;
+      padding: 0.5rem;
+      border-radius: 4px;
+      text-align: center;
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+
+    .score-input:focus {
+      outline: none;
+      border-color: var(--color-accent);
+    }
+
+    .form-group {
+      margin-bottom: 1.2rem;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.8rem;
+      color: var(--color-text-muted);
+      margin-bottom: 0.4rem;
+    }
+
+    .form-input-text {
+      width: 100%;
+      background: var(--color-bg);
+      border: 1px solid var(--color-border);
+      color: var(--color-text);
+      padding: 0.6rem;
+      border-radius: 4px;
+      font-size: 0.9rem;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 1rem;
+    }
+
+    .btn-action {
+      padding: 0.5rem 1rem;
+      border-radius: var(--radius);
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .btn-cancel {
+      background: transparent;
+      border: 1px solid var(--color-border);
+      color: var(--color-text-muted);
+    }
+
+    .btn-cancel:hover {
+      background: var(--color-surface-light);
+      color: var(--color-text);
+    }
+
+    .btn-save {
+      background: var(--color-primary);
+      border: 1px solid var(--color-primary);
+      color: #fff;
+    }
+
+    .btn-save:hover {
+      background: var(--color-primary-dark);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>FIFA World Cup <span>2026</span></h1>
+    <nav>
+      <ul>
+        <li><a href="../index.html">Inicio</a></li>
+        <li><a href="fixture.html" class="active">Fixture</a></li>
+        <li><a href="tops.html">Goleadores</a></li>
+        <li><a href="elimination-bracket.html">Llaves</a></li>
+        <li><a href="login.html" id="nav-login">Login</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <div class="controls-panel">
+      <div>
+        <h2>Fixture de la Fase de Grupos</h2>
+        <p style="color: var(--color-text-muted); font-size: 0.85rem; margin-top: 0.2rem;">
+          Resultados oficiales de los 12 grupos. Haz clic en un partido para editarlo y actualizar la tabla.
+        </p>
+      </div>
+      <div class="filter-btn-group">
+        <button class="btn-filter active" id="btn-show-all">Todos los Grupos</button>
+        <select class="btn-filter" id="select-group-filter" style="outline: none;">
+          <option value="">Filtrar por Letra...</option>
+          <option value="A">Grupo A</option>
+          <option value="B">Grupo B</option>
+          <option value="C">Grupo C</option>
+          <option value="D">Grupo D</option>
+          <option value="E">Grupo E</option>
+          <option value="F">Grupo F</option>
+          <option value="G">Grupo G</option>
+          <option value="H">Grupo H</option>
+          <option value="I">Grupo I</option>
+          <option value="J">Grupo J</option>
+          <option value="K">Grupo K</option>
+          <option value="L">Grupo L</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Contenedor Principal de Grupos -->
+    <div class="groups-grid" id="groups-container">
+      <p>Cargando fixture y grupos...</p>
+    </div>
+  </main>
+
+  <!-- Modal de Edición de Partido de Grupo -->
+  <div class="modal-overlay" id="edit-match-modal">
+    <div class="modal-card">
+      <div class="modal-title" id="modal-match-title">Registrar Resultado</div>
+      <form id="edit-match-form">
+        <input type="hidden" id="modal-match-id">
+        
+        <div class="modal-teams-edit">
+          <!-- Local -->
+          <div class="edit-team-row">
+            <div class="edit-team-info">
+              <img id="modal-home-flag" class="flag-icon" src="" alt="">
+              <span id="modal-home-name">Local</span>
+            </div>
+            <input type="number" id="modal-home-score" class="score-input" min="0" required>
+          </div>
+
+          <!-- Visitante -->
+          <div class="edit-team-row">
+            <div class="edit-team-info">
+              <img id="modal-away-flag" class="flag-icon" src="" alt="">
+              <span id="modal-away-name">Visitante</span>
+            </div>
+            <input type="number" id="modal-away-score" class="score-input" min="0" required>
+          </div>
+        </div>
+
+        <!-- Goleadores -->
+        <div class="form-group">
+          <label for="modal-home-scorers">Goleadores Local (ej. J. Pérez 12', M. Gómez 75')</label>
+          <input type="text" id="modal-home-scorers" class="form-input-text" placeholder="Goleadores local">
+        </div>
+
+        <div class="form-group">
+          <label for="modal-away-scorers">Goleadores Visitante (ej. L. Messi 88')</label>
+          <input type="text" id="modal-away-scorers" class="form-input-text" placeholder="Goleadores visitante">
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn-action btn-cancel" id="btn-close-modal">Cancelar</button>
+          <button type="submit" class="btn-action btn-save">Guardar Resultado</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script type="module">
+    import APIService from '../services/apiService.js';
+    import GroupController from '../controllers/GroupController.js';
+
+    const groupController = new GroupController();
+    let currentMatchObj = null;
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      await groupController.init();
+      renderGroups();
+
+      // Configurar filtros
+      document.getElementById('btn-show-all').addEventListener('click', () => {
+        document.getElementById('select-group-filter').value = '';
+        renderGroups();
+      });
+
+      document.getElementById('select-group-filter').addEventListener('change', (e) => {
+        renderGroups(e.target.value);
+      });
+
+      // Modales
+      document.getElementById('btn-close-modal').addEventListener('click', closeModal);
+      document.getElementById('edit-match-form').addEventListener('submit', saveMatchResult);
+      document.getElementById('edit-match-modal').addEventListener('click', (e) => {
+        if (e.target.id === 'edit-match-modal') closeModal();
+      });
+    });
+
+    /**
+     * Renderiza los grupos (o uno en específico)
+     */
+    function renderGroups(filterLetter = '') {
+      const container = document.getElementById('groups-container');
+      if (!container) return;
+
+      container.innerHTML = '';
+      const letters = filterLetter ? [filterLetter] : ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'];
+
+      letters.forEach(letter => {
+        const groupTableData = groupController.formatGroupTable(letter);
+        if (!groupTableData) return;
+
+        const groupMatches = groupController.getGroupMatches(letter);
+
+        const card = document.createElement('div');
+        card.className = 'group-card';
+        card.innerHTML = `
+          <div class="group-header-row">
+            <span class="group-title">Grupo ${letter}</span>
+            <span style="font-size: 0.75rem; color: var(--color-text-muted)">
+              ${groupController.isGroupComplete(letter) ? '✅ Completado' : '⏳ En juego'}
+            </span>
+          </div>
+          
+          <!-- Tabla de Posiciones -->
+          <table class="standings-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th style="text-align: left;">Equipo</th>
+                <th>PJ</th>
+                <th>G</th>
+                <th>E</th>
+                <th>P</th>
+                <th>GF</th>
+                <th>GC</th>
+                <th>DG</th>
+                <th>PTS</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${groupTableData.teams.map((t, idx) => {
+                const isQualify = idx < 2; // Clasificación directa
+                return `
+                  <tr class="${isQualify ? 'qualify-zone' : ''}">
+                    <td style="font-weight: 700;">${t.position}</td>
+                    <td class="team-cell">
+                      <img class="flag-icon" src="${t.flagUrl || 'https://flagcdn.com/w80/un.png'}" alt="">
+                      <span>${t.teamName}</span>
+                    </td>
+                    <td>${t.played}</td>
+                    <td>${t.wins}</td>
+                    <td>${t.draws}</td>
+                    <td>${t.losses}</td>
+                    <td>${t.goalsFor}</td>
+                    <td>${t.goalsAgainst}</td>
+                    <td>${t.goalDifference > 0 ? '+' + t.goalDifference : t.goalDifference}</td>
+                    <td style="font-weight: 700; color: var(--color-accent);">${t.points}</td>
+                  </tr>
+                `;
+              }).join('')}
+            </tbody>
+          </table>
+
+          <!-- Lista de partidos del grupo -->
+          <div class="matches-list">
+            <div style="font-size: 0.75rem; font-weight: 700; color: var(--color-text-muted); text-transform: uppercase;">
+              Partidos
+            </div>
+            ${groupMatches.map(m => {
+              const finished = m.finished === 'TRUE' || m.finished === true || m.finished === 'true';
+              const scoreText = finished ? `${m.home_score} - ${m.away_score}` : 'vs';
+              const dateObj = m.local_date.split(' ')[0]; // Solo fecha dd/mm/aaaa
+              return `
+                <div class="match-row" data-match-id="${m.id}">
+                  <div class="match-teams-flow">
+                    <span class="match-team home-t">${m.home_team_name_en}</span>
+                    <span class="match-score-flow">${scoreText}</span>
+                    <span class="match-team away-t">${m.away_team_name_en}</span>
+                  </div>
+                  <span class="match-date-meta">${dateObj}</span>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        `;
+
+        // Asignar eventos de clic a los partidos
+        card.querySelectorAll('.match-row').forEach(row => {
+          row.addEventListener('click', () => {
+            const matchId = row.dataset.matchId;
+            const match = groupMatches.find(m => String(m.id) === String(matchId));
+            if (match) openEditModal(match);
+          });
+        });
+
+        container.appendChild(card);
+      });
+    }
+
+    /**
+     * Abre el modal para editar resultado
+     */
+    async function openEditModal(match) {
+      // Obtener datos frescos
+      const freshMatch = await APIService.getMatchById(match.id);
+      if (!freshMatch) return;
+      currentMatchObj = freshMatch;
+
+      document.getElementById('modal-match-id').value = freshMatch.id;
+      document.getElementById('modal-match-title').textContent = `Editar Resultado - Grupo ${freshMatch.group} (Partido #${freshMatch.id})`;
+
+      const allTeams = groupController.teams;
+      const homeTeamInfo = allTeams.find(t => String(t.id) === String(freshMatch.home_team_id));
+      const awayTeamInfo = allTeams.find(t => String(t.id) === String(freshMatch.away_team_id));
+
+      document.getElementById('modal-home-flag').src = homeTeamInfo ? homeTeamInfo.flag : 'https://flagcdn.com/w80/un.png';
+      document.getElementById('modal-away-flag').src = awayTeamInfo ? awayTeamInfo.flag : 'https://flagcdn.com/w80/un.png';
+      document.getElementById('modal-home-name').textContent = freshMatch.home_team_name_en;
+      document.getElementById('modal-away-name').textContent = freshMatch.away_team_name_en;
+
+      const finished = freshMatch.finished === 'TRUE' || freshMatch.finished === true || freshMatch.finished === 'true';
+      document.getElementById('modal-home-score').value = finished ? freshMatch.home_score : '';
+      document.getElementById('modal-away-score').value = finished ? freshMatch.away_score : '';
+
+      document.getElementById('modal-home-scorers').value = (freshMatch.home_scorers && freshMatch.home_scorers !== 'null') ? freshMatch.home_scorers : '';
+      document.getElementById('modal-away-scorers').value = (freshMatch.away_scorers && freshMatch.away_scorers !== 'null') ? freshMatch.away_scorers : '';
+
+      document.getElementById('edit-match-modal').classList.add('active');
+    }
+
+    /**
+     * Cierra el modal
+     */
+    function closeModal() {
+      document.getElementById('edit-match-modal').classList.remove('active');
+      document.getElementById('edit-match-form').reset();
+      currentMatchObj = null;
+    }
+
+    /**
+     * Guarda el resultado en localStorage y refresca
+     */
+    async function saveMatchResult(e) {
+      e.preventDefault();
+      if (!currentMatchObj) return;
+
+      const matchId = document.getElementById('modal-match-id').value;
+      const homeScore = document.getElementById('modal-home-score').value;
+      const awayScore = document.getElementById('modal-away-score').value;
+      const homeScorers = document.getElementById('modal-home-scorers').value.trim();
+      const awayScorers = document.getElementById('modal-away-scorers').value.trim();
+
+      const fields = {
+        home_score: String(homeScore),
+        away_score: String(awayScore),
+        home_scorers: homeScorers || 'null',
+        away_scorers: awayScorers || 'null',
+        finished: 'TRUE',
+        time_elapsed: 'finished'
+      };
+
+      await APIService.updateMatchResult(matchId, fields);
+      
+      // Re-inicializar controlador
+      await groupController.init();
+      
+      // Mantener filtro activo
+      const selectedFilter = document.getElementById('select-group-filter').value;
+      renderGroups(selectedFilter);
+      closeModal();
+    }
+  </script>
+</body>
+</html>
