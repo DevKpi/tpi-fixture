@@ -114,7 +114,7 @@ class MundialController {
    * @returns {Object} Grupo con standings
    */
   getGroupByName(groupName) {
-    return this.groups.find(g => g.group === groupName);
+    return this.groups.find(g => (g.group || g.name) === groupName);
   }
 
   /**

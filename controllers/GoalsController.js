@@ -45,20 +45,30 @@ class GoalsController {
     this.matches.forEach(match => {
       // Goles del equipo local
       if (match.home_scorers && match.home_scorers !== 'null' && match.home_scorers !== 'NULL' && match.home_scorers !== '') {
-        const goals = match.home_scorers.split(',').map(g => g.trim());
+        // Limpiar llaves y comillas antes de separar si es formato JSON string
+        const cleanedStr = match.home_scorers.replace(/[{}"“”]/g, '');
+        const goals = cleanedStr.split(',').map(g => g.trim());
         goals.forEach(goal => {
           if (goal) {
-            scorers[goal] = (scorers[goal] || 0) + 1;
+            // Extraer el nombre del jugador quitando el minuto al final (ej: "J. Quiñones 9'" -> "J. Quiñones")
+            const playerName = goal.replace(/\s+\d+('|\+)?\d*'?$/, '').trim();
+            if (playerName) {
+              scorers[playerName] = (scorers[playerName] || 0) + 1;
+            }
           }
         });
       }
 
       // Goles del equipo visitante
       if (match.away_scorers && match.away_scorers !== 'null' && match.away_scorers !== 'NULL' && match.away_scorers !== '') {
-        const goals = match.away_scorers.split(',').map(g => g.trim());
+        const cleanedStr = match.away_scorers.replace(/[{}"“”]/g, '');
+        const goals = cleanedStr.split(',').map(g => g.trim());
         goals.forEach(goal => {
           if (goal) {
-            scorers[goal] = (scorers[goal] || 0) + 1;
+            const playerName = goal.replace(/\s+\d+('|\+)?\d*'?$/, '').trim();
+            if (playerName) {
+              scorers[playerName] = (scorers[playerName] || 0) + 1;
+            }
           }
         });
       }

@@ -1,6 +1,6 @@
 /**
  * GroupController - Controlador de Grupos
- * Gestiona la lógica de grupos, standings y clasificación
+ * Gestiona la lógica de grupos, standings y clasificación de forma dinámica.
  */
 
 import APIService from '../services/apiService.js';
@@ -13,7 +13,7 @@ class GroupController {
   }
 
   /**
-   * Inicializa el controlador
+   * Inicializa el controlador cargando los datos frescos
    */
   async init() {
     console.log('[GroupController] Inicializando...');
@@ -39,10 +39,10 @@ class GroupController {
   /**
    * Obtiene un grupo específico
    * @param {string} groupName - Letra del grupo (A-L)
-   * @returns {Object} Grupo con standings
+   * @returns {Object} Grupo
    */
   getGroup(groupName) {
-    return this.groups.find(g => g.group === groupName);
+    return this.groups.find(g => (g.group || g.name) === groupName);
   }
 
   /**
@@ -63,32 +63,103 @@ class GroupController {
   }
 
   /**
-   * Obtiene standings formateados de un grupo
+   * Obtiene standings formateados de un grupo calculados DINÁMICAMENTE desde los partidos
    * @param {string} groupName - Letra del grupo (A-L)
    * @returns {Object} Standings del grupo
    */
   getGroupStandings(groupName) {
     const group = this.getGroup(groupName);
-    if (!group || !group.teams) return null;
+    if (!group) return null;
+
+    const groupTeams = this.getTeamsByGroup(groupName);
+    const groupMatches = this.getGroupMatches(groupName);
+
+    // Calcular estadísticas por equipo
+    const standingsMap = {};
+    groupTeams.forEach(team => {
+      standingsMap[String(team.id)] = {
+        teamId: String(team.id),
+        teamName: team.name_en,
+        played: 0,
+        wins: 0,
+        draws: 0,
+        losses: 0,
+        goalsFor: 0,
+        goalsAgainst: 0,
+        goalDifference: 0,
+        points: 0
+      };
+    });
+
+    groupMatches.forEach(match => {
+      const finished = match.finished === 'TRUE' || match.finished === true || match.finished === 'true';
+      if (!finished) return;
+
+      const homeId = String(match.home_team_id);
+      const awayId = String(match.away_team_id);
+      
+      const homeScore = parseInt(match.home_score) || 0;
+      const awayScore = parseInt(match.away_score) || 0;
+
+      // Actualizar equipo local
+      if (standingsMap[homeId]) {
+        const stats = standingsMap[homeId];
+        stats.played++;
+        stats.goalsFor += homeScore;
+        stats.goalsAgainst += awayScore;
+        if (homeScore > awayScore) {
+          stats.wins++;
+          stats.points += 3;
+        } else if (homeScore === awayScore) {
+          stats.draws++;
+          stats.points += 1;
+        } else {
+          stats.losses++;
+        }
+      }
+
+      // Actualizar equipo visitante
+      if (standingsMap[awayId]) {
+        const stats = standingsMap[awayId];
+        stats.played++;
+        stats.goalsFor += awayScore;
+        stats.goalsAgainst += homeScore;
+        if (awayScore > homeScore) {
+          stats.wins++;
+          stats.points += 3;
+        } else if (homeScore === awayScore) {
+          stats.draws++;
+          stats.points += 1;
+        } else {
+          stats.losses++;
+        }
+      }
+    });
+
+    // Convertir a array y calcular diferencia de gol
+    const standingsList = Object.values(standingsMap).map(stats => {
+      stats.goalDifference = stats.goalsFor - stats.goalsAgainst;
+      return stats;
+    });
+
+    // Ordenar standings según criterio de FIFA:
+    // 1. Puntos
+    // 2. Diferencia de Gol
+    // 3. Goles a Favor
+    // 4. Enfrentamiento directo (simplificado aquí por orden alfabético para fallback estable)
+    standingsList.sort((a, b) => {
+      if (b.points !== a.points) return b.points - a.points;
+      if (b.goalDifference !== a.goalDifference) return b.goalDifference - a.goalDifference;
+      if (b.goalsFor !== a.goalsFor) return b.goalsFor - a.goalsFor;
+      return a.teamName.localeCompare(b.teamName);
+    });
 
     return {
       groupName,
-      standings: group.teams.map((standing, index) => {
-        const team = this.getTeamInfo(standing.team_id);
-        return {
-          position: index + 1,
-          teamId: standing.team_id,
-          teamName: team ? team.name_en : 'Desconocido',
-          points: parseInt(standing.pts) || 0,
-          played: 0, // Se calcula con los partidos
-          wins: 0,
-          draws: 0,
-          losses: 0,
-          goalsFor: parseInt(standing.gf) || 0,
-          goalsAgainst: parseInt(standing.ga) || 0,
-          goalDifference: (parseInt(standing.gf) || 0) - (parseInt(standing.ga) || 0)
-        };
-      })
+      standings: standingsList.map((standing, index) => ({
+        ...standing,
+        position: index + 1
+      }))
     };
   }
 
@@ -111,15 +182,14 @@ class GroupController {
   }
 
   /**
-   * Calcula el resultado del grupo (cuáles equipos avanzan)
+   * Obtiene el resultado del grupo (cuáles equipos avanzan)
    * @param {string} groupName - Letra del grupo (A-L)
-   * @returns {Array} Equipos clasificados (max 2)
+   * @returns {Array} Equipos clasificados (los primeros 2)
    */
   getQualifiedTeams(groupName) {
     const standings = this.getGroupStandings(groupName);
     if (!standings) return [];
 
-    // Retornar los primeros 2 equipos
     return standings.standings.slice(0, 2);
   }
 
@@ -157,12 +227,8 @@ class GroupController {
    */
   isGroupComplete(groupName) {
     const matches = this.getGroupMatches(groupName);
-    // Cada grupo debe tener 6 partidos (4 equipos juegan todos contra todos)
-    // 4C2 = 6
-    const groupMatchesCount = 6;
-    const finishedMatches = matches.filter(m => m.finished === 'TRUE' || m.finished === true).length;
-
-    return finishedMatches === groupMatchesCount;
+    const finishedMatches = matches.filter(m => m.finished === 'TRUE' || m.finished === true || m.finished === 'true').length;
+    return finishedMatches === matches.length && matches.length > 0;
   }
 
   /**
@@ -178,137 +244,6 @@ class GroupController {
       groupName,
       qualified: standings.standings.slice(0, 2),
       eliminated: standings.standings.slice(2)
-    };
-  }
-
-  /**
-   * Compara dos equipos en un grupo
-   * @param {string} groupName
-   * @param {string|number} team1Id
-   * @param {string|number} team2Id
-   * @returns {Array} Historial de enfrentamientos
-   */
-  getHeadToHead(groupName, team1Id, team2Id) {
-    const groupMatches = this.getGroupMatches(groupName);
-    
-    return groupMatches.filter(m =>
-      (m.home_team_id === String(team1Id) && m.away_team_id === String(team2Id)) ||
-      (m.home_team_id === String(team2Id) && m.away_team_id === String(team1Id))
-    );
-  }
-
-  /**
-   * Obtiene estadísticas generales de los grupos
-   * @returns {Object}
-   */
-  getGroupsStats() {
-    const groupLetters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'];
-    let totalMatches = 0;
-    let totalGoals = 0;
-    let completeGroups = 0;
-
-    groupLetters.forEach(letter => {
-      if (this.isGroupComplete(letter)) {
-        completeGroups++;
-      }
-
-      const matches = this.getGroupMatches(letter);
-      totalMatches += matches.length;
-
-      matches.forEach(match => {
-        totalGoals += (parseInt(match.home_score) || 0) + (parseInt(match.away_score) || 0);
-      });
-    });
-
-    return {
-      totalGroups: 12,
-      completeGroups,
-      totalMatches,
-      totalGoals,
-      averageGoalsPerMatch: totalMatches > 0 ? (totalGoals / totalMatches).toFixed(2) : 0,
-      progressPercent: completeGroups > 0 ? Math.round((completeGroups / 12) * 100) : 0
-    };
-  }
-
-  /**
-   * Busca un equipo en un grupo
-   * @param {string} groupName
-   * @param {string|number} teamId
-   * @returns {Object|null}
-   */
-  getTeamInGroup(groupName, teamId) {
-    const standings = this.getGroupStandings(groupName);
-    if (!standings) return null;
-
-    return standings.standings.find(t => 
-      t.teamId === String(teamId) || t.teamId === teamId
-    ) || null;
-  }
-
-  /**
-   * Obtiene próximos partidos de un grupo
-   * @param {string} groupName
-   * @returns {Array}
-   */
-  getUpcomingGroupMatches(groupName) {
-    const groupMatches = this.getGroupMatches(groupName);
-    return groupMatches.filter(m => m.finished === 'FALSE' || m.finished === false);
-  }
-
-  /**
-   * Obtiene partidos finalizados de un grupo
-   * @param {string} groupName
-   * @returns {Array}
-   */
-  getFinishedGroupMatches(groupName) {
-    const groupMatches = this.getGroupMatches(groupName);
-    return groupMatches.filter(m => m.finished === 'TRUE' || m.finished === true);
-  }
-
-  /**
-   * Obtiene mano a mano detallado entre dos equipos en un grupo
-   * @param {string} groupName
-   * @param {string|number} team1Id
-   * @param {string|number} team2Id
-   * @returns {Object}
-   */
-  getDetailedHeadToHead(groupName, team1Id, team2Id) {
-    const matches = this.getHeadToHead(groupName, team1Id, team2Id);
-    
-    let team1Wins = 0, team2Wins = 0, draws = 0;
-    let team1Goals = 0, team2Goals = 0;
-
-    matches.forEach(match => {
-      const isTeam1Home = String(match.home_team_id) === String(team1Id);
-      const homeScore = parseInt(match.home_score) || 0;
-      const awayScore = parseInt(match.away_score) || 0;
-
-      if (isTeam1Home) {
-        team1Goals += homeScore;
-        team2Goals += awayScore;
-        if (homeScore > awayScore) team1Wins++;
-        else if (awayScore > homeScore) team2Wins++;
-        else draws++;
-      } else {
-        team2Goals += homeScore;
-        team1Goals += awayScore;
-        if (homeScore > awayScore) team2Wins++;
-        else if (awayScore > homeScore) team1Wins++;
-        else draws++;
-      }
-    });
-
-    return {
-      team1Id,
-      team2Id,
-      team1Name: this.getTeamInfo(team1Id)?.name_en,
-      team2Name: this.getTeamInfo(team2Id)?.name_en,
-      team1Wins,
-      team2Wins,
-      draws,
-      team1Goals,
-      team2Goals,
-      matches
     };
   }
 }
