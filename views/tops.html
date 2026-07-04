@@ -3,37 +3,54 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tabla de Goleadores - FIFA World Cup 2026</title>
+  <title>Rankings y Estadísticas del Torneo - FIFA World Cup 2026</title>
   <link rel="stylesheet" href="./styles/styles.css">
   <style>
-    /* Estilos Premium para la Tabla de Goleadores */
+    /* Estilos Premium para Rankings y Estadísticas */
+    .rankings-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2rem;
+      margin-top: 1.5rem;
+    }
+
+    @media (min-width: 1024px) {
+      .rankings-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
     .stats-card {
       background: var(--color-surface);
       border: 1px solid var(--color-border);
       border-radius: var(--radius);
       padding: 1.5rem;
       box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-      margin-bottom: 2rem;
+      display: flex;
+      flex-direction: column;
     }
 
     .stats-title {
-      font-size: 1.25rem;
+      font-size: 1.15rem;
       font-weight: 700;
       color: var(--color-accent);
-      margin-bottom: 1.2rem;
+      margin-bottom: 1rem;
       border-bottom: 1px solid var(--color-border);
       padding-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
     }
 
     .scorers-table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 0.5rem;
+      font-size: 0.85rem;
     }
 
     .scorers-table th,
     .scorers-table td {
-      padding: 0.8rem 1rem;
+      padding: 0.6rem 0.5rem;
       text-align: left;
     }
 
@@ -42,31 +59,41 @@
       border-bottom: 2px solid var(--color-border);
       font-weight: 600;
       text-transform: uppercase;
-      font-size: 0.75rem;
+      font-size: 0.7rem;
       letter-spacing: 0.5px;
     }
 
     .scorers-table td {
-      font-size: 0.9rem;
       border-bottom: 1px solid var(--color-surface-light);
     }
 
     .scorers-table tr:hover td {
-      background: rgba(255, 255, 255, 0.02);
+      background: rgba(255, 255, 255, 0.01);
     }
 
     .rank-cell {
       font-weight: 700;
       color: var(--color-accent);
+      width: 40px;
+      text-align: center !important;
+    }
+
+    .value-cell {
+      font-weight: 700;
       width: 60px;
       text-align: center !important;
     }
 
-    .goals-cell {
-      font-weight: 700;
+    .value-goals {
       color: var(--color-success);
-      width: 100px;
-      text-align: center !important;
+    }
+
+    .value-assists {
+      color: var(--color-accent);
+    }
+
+    .value-sheets {
+      color: #38bdf8; /* Azul cielo */
     }
 
     .scorers-table th.center-align,
@@ -77,67 +104,66 @@
     /* Medallas para los Top 3 */
     .medal {
       display: inline-block;
-      width: 24px;
-      height: 24px;
-      line-height: 24px;
+      width: 20px;
+      height: 20px;
+      line-height: 20px;
       border-radius: 50%;
       text-align: center;
       font-weight: 700;
-      font-size: 0.8rem;
+      font-size: 0.75rem;
     }
 
     .medal-1 {
       background: #ffd700;
       color: #000;
-      box-shadow: 0 0 8px rgba(255, 215, 0, 0.4);
     }
 
     .medal-2 {
       background: #c0c0c0;
       color: #000;
-      box-shadow: 0 0 8px rgba(192, 192, 192, 0.4);
     }
 
     .medal-3 {
       background: #cd7f32;
       color: #000;
-      box-shadow: 0 0 8px rgba(205, 127, 50, 0.4);
     }
 
-    .grid-layout {
+    .sub-info {
+      font-size: 0.7rem;
+      color: var(--color-text-muted);
+      display: block;
+    }
+
+    /* Resumen de stats en la cabecera */
+    .header-summary-grid {
       display: grid;
-      grid-template-columns: 1fr;
-      gap: 2rem;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
     }
 
-    @media (min-width: 800px) {
-      .grid-layout {
-        grid-template-columns: 2fr 1fr;
-      }
-    }
-
-    .stat-badge {
-      background: var(--color-surface-light);
+    .summary-badge {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
       border-radius: var(--radius);
       padding: 1rem;
       text-align: center;
       display: flex;
       flex-direction: column;
-      justify-content: center;
-      gap: 0.4rem;
+      gap: 0.25rem;
     }
 
-    .stat-value {
-      font-size: 2rem;
+    .summary-value {
+      font-size: 1.75rem;
       font-weight: 700;
       color: var(--color-accent);
     }
 
-    .stat-label {
-      font-size: 0.75rem;
+    .summary-label {
+      font-size: 0.7rem;
       color: var(--color-text-muted);
       text-transform: uppercase;
-      letter-spacing: 0.5px;
+      font-weight: 600;
     }
   </style>
 </head>
@@ -156,10 +182,33 @@
   </header>
 
   <main>
-    <div class="grid-layout">
-      <!-- Tabla Principal de Goleadores -->
+    <h2>Líderes de Estadísticas</h2>
+    <p style="color: var(--color-text-muted); font-size: 0.85rem; margin-bottom: 1.5rem;">
+      Estadísticas generales calculadas a partir de todos los partidos jugados y simulados del torneo.
+    </p>
+
+    <!-- Resumen general -->
+    <div class="header-summary-grid" id="stats-summary-bar">
+      <div class="summary-badge">
+        <span class="summary-value" id="val-total-goals">--</span>
+        <span class="summary-label">Goles Totales</span>
+      </div>
+      <div class="summary-badge">
+        <span class="summary-value" id="val-avg-goals">--</span>
+        <span class="summary-label">Promedio de Goles</span>
+      </div>
+      <div class="summary-badge">
+        <span class="summary-value" id="val-clean-sheets">--</span>
+        <span class="summary-label">Vallas Invictas Totales</span>
+      </div>
+    </div>
+
+    <!-- Grid de Rankings -->
+    <div class="rankings-grid">
+      
+      <!-- Goleadores -->
       <div class="stats-card">
-        <div class="stats-title">Tabla de Goleadores (Top 15)</div>
+        <div class="stats-title">⚽ Bota de Oro (Goles)</div>
         <table class="scorers-table" id="scorers-table">
           <thead>
             <tr>
@@ -170,7 +219,7 @@
           </thead>
           <tbody>
             <tr>
-              <td colspan="3" style="text-align: center; color: var(--color-text-muted);">
+              <td colspan="3" style="text-align: center; color: var(--color-text-muted); padding: 2rem;">
                 Cargando goleadores...
               </td>
             </tr>
@@ -178,40 +227,86 @@
         </table>
       </div>
 
-      <!-- Resumen Estadístico de Goles -->
-      <div style="display: flex; flex-direction: column; gap: 1.5rem;">
-        <div class="stats-card">
-          <div class="stats-title">Resumen de Goles</div>
-          <div style="display: flex; flex-direction: column; gap: 1rem;" id="goals-summary-container">
-            <p style="color: var(--color-text-muted);">Cargando estadísticas...</p>
-          </div>
-        </div>
+      <!-- Asistidores -->
+      <div class="stats-card">
+        <div class="stats-title">🎯 Líderes de Asistencias</div>
+        <table class="scorers-table" id="assists-table">
+          <thead>
+            <tr>
+              <th class="center-align">Pos</th>
+              <th>Jugador</th>
+              <th class="center-align">Asist.</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td colspan="3" style="text-align: center; color: var(--color-text-muted); padding: 2rem;">
+                Cargando asistidores...
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
+
+      <!-- Vallas Invictas -->
+      <div class="stats-card">
+        <div class="stats-title">🧤 Guante de Oro (Vallas Invictas)</div>
+        <table class="scorers-table" id="cleansheets-table">
+          <thead>
+            <tr>
+              <th class="center-align">Pos</th>
+              <th>Arquero</th>
+              <th class="center-align">Vallas</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td colspan="3" style="text-align: center; color: var(--color-text-muted); padding: 2rem;">
+                Cargando vallas invictas...
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
     </div>
   </main>
 
   <script type="module">
     import GoalsController from '../controllers/GoalsController.js';
+    import AssistController from '../controllers/AssistController.js';
+    import CleanSheetController from '../controllers/CleanSheet.js';
 
     const goalsController = new GoalsController();
+    const assistController = new AssistController();
+    const cleanSheetController = new CleanSheetController();
 
     document.addEventListener('DOMContentLoaded', async () => {
-      await goalsController.init();
+      // Inicializar controladores en paralelo
+      await Promise.all([
+        goalsController.init(),
+        assistController.init(),
+        cleanSheetController.init()
+      ]);
+
       renderTopScorers();
-      renderStatsSummary();
+      renderTopAssists();
+      renderTopCleanSheets();
+      renderGeneralSummary();
     });
 
+    // Render de Goleadores
     function renderTopScorers() {
       const tableBody = document.querySelector('#scorers-table tbody');
       if (!tableBody) return;
 
-      const scorers = goalsController.getTopScorers(15);
+      const scorers = goalsController.getTopScorers(10);
       
       if (scorers.length === 0) {
         tableBody.innerHTML = `
           <tr>
-            <td colspan="3" style="text-align: center; color: var(--color-text-muted);">
-              Aún no se han registrado goles en el torneo.
+            <td colspan="3" style="text-align: center; color: var(--color-text-muted); padding: 1.5rem;">
+              Sin goles registrados.
             </td>
           </tr>
         `;
@@ -229,37 +324,100 @@
         return `
           <tr>
             <td class="rank-cell center-align">${rankHTML}</td>
-            <td style="font-weight: 600; color: var(--color-text);">${s.player}</td>
-            <td class="goals-cell center-align">${s.goals}</td>
+            <td>
+              <span style="font-weight: 700; color: #fff;">${s.player}</span>
+            </td>
+            <td class="value-cell value-goals center-align">${s.goals}</td>
           </tr>
         `;
       }).join('');
     }
 
-    function renderStatsSummary() {
-      const container = document.getElementById('goals-summary-container');
-      if (!container) return;
+    // Render de Asistidores
+    function renderTopAssists() {
+      const tableBody = document.querySelector('#assists-table tbody');
+      if (!tableBody) return;
 
-      const summary = goalsController.getTournamentGoalStats();
+      const assists = assistController.getTopAssists(10);
+      
+      if (assists.length === 0) {
+        tableBody.innerHTML = `
+          <tr>
+            <td colspan="3" style="text-align: center; color: var(--color-text-muted); padding: 1.5rem;">
+              Sin asistencias registradas.
+            </td>
+          </tr>
+        `;
+        return;
+      }
 
-      container.innerHTML = `
-        <div class="stat-badge">
-          <span class="stat-value">${summary.totalGoals}</span>
-          <span class="stat-label">Goles Totales</span>
-        </div>
-        <div class="stat-badge">
-          <span class="stat-value">${summary.averageGoalsPerMatch}</span>
-          <span class="stat-label">Promedio de Goles por Partido</span>
-        </div>
-        <div class="stat-badge">
-          <span class="stat-value">${summary.uniqueScorers}</span>
-          <span class="stat-label">Goleadores Únicos</span>
-        </div>
-        <div class="stat-badge">
-          <span class="stat-value">${summary.maxGoalsInMatch}</span>
-          <span class="stat-label">Máximo de Goles en un Partido</span>
-        </div>
-      `;
+      tableBody.innerHTML = assists.map((s, index) => {
+        const rank = index + 1;
+        let rankHTML = rank;
+        
+        if (rank === 1) rankHTML = '<span class="medal medal-1">1</span>';
+        else if (rank === 2) rankHTML = '<span class="medal medal-2">2</span>';
+        else if (rank === 3) rankHTML = '<span class="medal medal-3">3</span>';
+
+        return `
+          <tr>
+            <td class="rank-cell center-align">${rankHTML}</td>
+            <td>
+              <span style="font-weight: 700; color: #fff;">${s.player}</span>
+            </td>
+            <td class="value-cell value-assists center-align">${s.assists}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // Render de Vallas Invictas
+    function renderTopCleanSheets() {
+      const tableBody = document.querySelector('#cleansheets-table tbody');
+      if (!tableBody) return;
+
+      const cleanSheets = cleanSheetController.getTopCleanSheets(10);
+      
+      if (cleanSheets.length === 0) {
+        tableBody.innerHTML = `
+          <tr>
+            <td colspan="3" style="text-align: center; color: var(--color-text-muted); padding: 1.5rem;">
+              Sin partidos terminados a cero.
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tableBody.innerHTML = cleanSheets.map((s, index) => {
+        const rank = index + 1;
+        let rankHTML = rank;
+        
+        if (rank === 1) rankHTML = '<span class="medal medal-1">1</span>';
+        else if (rank === 2) rankHTML = '<span class="medal medal-2">2</span>';
+        else if (rank === 3) rankHTML = '<span class="medal medal-3">3</span>';
+
+        return `
+          <tr>
+            <td class="rank-cell center-align">${rankHTML}</td>
+            <td>
+              <span style="font-weight: 700; color: #fff;">${s.goalkeeper}</span>
+              <span class="sub-info">${s.teamName}</span>
+            </td>
+            <td class="value-cell value-sheets center-align">${s.cleanSheets}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // Resumen en cabecera
+    function renderGeneralSummary() {
+      const goalsSummary = goalsController.getTournamentGoalStats();
+      const cleanSheetsCount = cleanSheetController.cleanSheets.reduce((sum, item) => sum + item.cleanSheets, 0);
+
+      document.getElementById('val-total-goals').textContent = goalsSummary.totalGoals;
+      document.getElementById('val-avg-goals').textContent = goalsSummary.averageGoalsPerMatch;
+      document.getElementById('val-clean-sheets').textContent = cleanSheetsCount;
     }
   </script>
 </body>

@@ -424,6 +424,17 @@
           <input type="text" id="modal-away-scorers" class="form-input-text" placeholder="Goleadores visitante">
         </div>
 
+        <!-- Asistidores -->
+        <div class="form-group">
+          <label for="modal-home-assists">Asistidores Local (ej. L. Messi, J. Álvarez)</label>
+          <input type="text" id="modal-home-assists" class="form-input-text" placeholder="Asistidores local">
+        </div>
+
+        <div class="form-group">
+          <label for="modal-away-assists">Asistidores Visitante (ej. A. Di María)</label>
+          <input type="text" id="modal-away-assists" class="form-input-text" placeholder="Asistidores visitante">
+        </div>
+
         <div class="modal-actions">
           <button type="button" class="btn-action btn-cancel" id="btn-close-modal">Cancelar</button>
           <button type="submit" class="btn-action btn-save">Guardar Resultado</button>
@@ -591,6 +602,10 @@
       document.getElementById('modal-home-scorers').value = (freshMatch.home_scorers && freshMatch.home_scorers !== 'null') ? freshMatch.home_scorers : '';
       document.getElementById('modal-away-scorers').value = (freshMatch.away_scorers && freshMatch.away_scorers !== 'null') ? freshMatch.away_scorers : '';
 
+      // Asistidores
+      document.getElementById('modal-home-assists').value = (freshMatch.home_assists && freshMatch.home_assists !== 'null') ? freshMatch.home_assists : '';
+      document.getElementById('modal-away-assists').value = (freshMatch.away_assists && freshMatch.away_assists !== 'null') ? freshMatch.away_assists : '';
+
       document.getElementById('edit-match-modal').classList.add('active');
     }
 
@@ -615,12 +630,16 @@
       const awayScore = document.getElementById('modal-away-score').value;
       const homeScorers = document.getElementById('modal-home-scorers').value.trim();
       const awayScorers = document.getElementById('modal-away-scorers').value.trim();
+      const homeAssists = document.getElementById('modal-home-assists').value.trim();
+      const awayAssists = document.getElementById('modal-away-assists').value.trim();
 
       const fields = {
         home_score: String(homeScore),
         away_score: String(awayScore),
         home_scorers: homeScorers || 'null',
         away_scorers: awayScorers || 'null',
+        home_assists: homeAssists || 'null',
+        away_assists: awayAssists || 'null',
         finished: 'TRUE',
         time_elapsed: 'finished'
       };
