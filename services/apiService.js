@@ -3,6 +3,9 @@
  * Wrapper para conectar con la API worldcup26.ir
  * Soporta persistencia local en localStorage para modificaciones de resultados.
  */
+import Partido from '../models/Match.js';
+import Seleccion from '../models/CountryTeams.js';
+import Jugador from '../models/Player.js';
 
 const API_BASE_URL = 'https://worldcup26.ir';
 
@@ -32,32 +35,56 @@ class APIService {
     }
   }
 
-  /**
-   * Obtiene todos los 104 partidos del torneo
-   * @returns {Promise<Array>} Array de partidos
-   */
   static async getAllMatches() {
     try {
-      // Verificar si ya hay datos en localStorage
+      let games = [];
       const localMatchesStr = localStorage.getItem('worldcup2026_matches');
       if (localMatchesStr) {
-        return JSON.parse(localMatchesStr);
+        games = JSON.parse(localMatchesStr);
+      } else {
+        const data = await this.fetchData('/get/games');
+        games = data.games || [];
+        if (games.length > 0) {
+          localStorage.setItem('worldcup2026_matches', JSON.stringify(games));
+        }
       }
       
-      const data = await this.fetchData('/get/games');
-      const games = data.games || [];
-      
-      // Guardar en localStorage
-      if (games.length > 0) {
-        localStorage.setItem('worldcup2026_matches', JSON.stringify(games));
-      }
-      return games;
+      // Mapear los partidos a instancias de la clase del modelo Partido
+      return games.map(m => new Partido(
+        m.id,
+        m.home_team_name_en || m.home_team_label,
+        m.away_team_name_en || m.away_team_label,
+        m.local_date,
+        m.stadium_id,
+        '', // arbitro
+        m.home_score,
+        m.away_score,
+        [], // goles list
+        (m.finished === 'TRUE' || m.finished === true || m.finished === 'true') ? 'FINALIZADO' : 'PENDIENTE',
+        m.type,
+        m.group,
+        m
+      ));
     } catch (error) {
       console.error('Error fetching all matches:', error);
-      // Fallback a localStorage si está sin conexión
       const localMatchesStr = localStorage.getItem('worldcup2026_matches');
       if (localMatchesStr) {
-        return JSON.parse(localMatchesStr);
+        const games = JSON.parse(localMatchesStr);
+        return games.map(m => new Partido(
+          m.id,
+          m.home_team_name_en || m.home_team_label,
+          m.away_team_name_en || m.away_team_label,
+          m.local_date,
+          m.stadium_id,
+          '', // arbitro
+          m.home_score,
+          m.away_score,
+          [],
+          (m.finished === 'TRUE' || m.finished === true || m.finished === 'true') ? 'FINALIZADO' : 'PENDIENTE',
+          m.type,
+          m.group,
+          m
+        ));
       }
       return [];
     }
@@ -122,32 +149,97 @@ class APIService {
     }
   }
 
-  /**
-   * Obtiene todos los 48 equipos calificados
-   * @returns {Promise<Array>} Array de equipos
-   */
   static async getAllTeams() {
     try {
-      // Intentar cargar de localStorage primero
+      let teamsRaw = [];
       const localTeamsStr = localStorage.getItem('worldcup2026_teams');
       if (localTeamsStr) {
-        return JSON.parse(localTeamsStr);
+        teamsRaw = JSON.parse(localTeamsStr);
+      } else {
+        const isView = window.location.pathname.includes('/views/');
+        const path = isView ? '../data/teams.json' : './data/teams.json';
+        
+        const response = await fetch(path);
+        teamsRaw = await response.json();
+
+        if (teamsRaw.length > 0) {
+          localStorage.setItem('worldcup2026_teams', JSON.stringify(teamsRaw));
+        }
       }
 
-      const data = await this.fetchData('/get/teams');
-      const teams = data.teams || [];
-
-      if (teams.length > 0) {
-        localStorage.setItem('worldcup2026_teams', JSON.stringify(teams));
-      }
-      return teams;
+      // Mapear a instancias de las clases Seleccion y Jugador del modelo
+      return teamsRaw.map(t => {
+        const jugadores = (t.plantilla || t.jugadores || []).map(p => new Jugador(
+          p.id,
+          p.nombreCompleto || p.name,
+          p.numero,
+          p.posicion,
+          p.seleccion,
+          p.goles,
+          p.asistencias,
+          p.amarillas,
+          p.rojas,
+          p
+        ));
+        
+        return new Seleccion(
+          t.id,
+          t.nombre || t.name_en,
+          t.bandera || t.flag,
+          t.entrenador,
+          jugadores,
+          t.grupo || t.groups,
+          t
+        );
+      });
     } catch (error) {
-      console.error('Error fetching all teams:', error);
-      const localTeamsStr = localStorage.getItem('worldcup2026_teams');
-      if (localTeamsStr) {
-        return JSON.parse(localTeamsStr);
+      console.error('Error fetching teams from local JSON, falling back to API:', error);
+      // Fallback a API
+      try {
+        const data = await this.fetchData('/get/teams');
+        const teamsRaw = data.teams || [];
+        if (teamsRaw.length > 0) {
+          localStorage.setItem('worldcup2026_teams', JSON.stringify(teamsRaw));
+        }
+        return teamsRaw.map(t => new Seleccion(
+          t.id,
+          t.name_en,
+          t.flag,
+          '', // Sin entrenador
+          [], // Sin plantilla
+          t.groups,
+          t
+        ));
+      } catch (apiError) {
+        const localTeamsStr = localStorage.getItem('worldcup2026_teams');
+        if (localTeamsStr) {
+          const teamsRaw = JSON.parse(localTeamsStr);
+          return teamsRaw.map(t => {
+            const jugadores = (t.plantilla || t.jugadores || []).map(p => new Jugador(
+              p.id,
+              p.nombreCompleto || p.name,
+              p.numero,
+              p.posicion,
+              p.seleccion,
+              p.goles,
+              p.asistencias,
+              p.amarillas,
+              p.rojas,
+              p
+            ));
+            return new Seleccion(
+              t.id,
+              t.nombre || t.name_en,
+              t.bandera || t.flag,
+              t.entrenador,
+              jugadores,
+              t.grupo || t.groups,
+              t
+            );
+          });
+        }
+        return [];
       }
-      return [];
     }
   }
 
