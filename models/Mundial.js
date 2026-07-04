@@ -53,3 +53,5 @@ class Mundial {
     }
 
 }
+
+export default Mundial;
