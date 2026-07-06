@@ -281,6 +281,12 @@
       border-color: var(--color-accent);
     }
 
+    .player-select-container {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+
     .form-group {
       margin-bottom: 1.2rem;
     }
@@ -415,24 +421,45 @@
 
         <!-- Goleadores -->
         <div class="form-group">
-          <label for="modal-home-scorers">Goleadores Local (ej. J. Pérez 12', M. Gómez 75')</label>
-          <input type="text" id="modal-home-scorers" class="form-input-text" placeholder="Goleadores local">
+          <label for="modal-home-scorers">Goleadores Local</label>
+          <div class="player-select-container">
+            <select id="home-players-select" class="form-input-text">
+              <option value="">Agregar jugador...</option>
+            </select>
+          </div>
+          <input type="text" id="modal-home-scorers" class="form-input-text" placeholder="Ej. L. Messi 12'">
         </div>
 
         <div class="form-group">
-          <label for="modal-away-scorers">Goleadores Visitante (ej. L. Messi 88')</label>
-          <input type="text" id="modal-away-scorers" class="form-input-text" placeholder="Goleadores visitante">
+          <label for="modal-away-scorers">Goleadores Visitante</label>
+          <div class="player-select-container">
+            <select id="away-players-select" class="form-input-text">
+              <option value="">Agregar jugador...</option>
+            </select>
+          </div>
+          <input type="text" id="modal-away-scorers" class="form-input-text" placeholder="Ej. K. Mbappé 88'">
         </div>
 
         <!-- Asistidores -->
+        <!-- Asistidores -->
         <div class="form-group">
-          <label for="modal-home-assists">Asistidores Local (ej. L. Messi, J. Álvarez)</label>
-          <input type="text" id="modal-home-assists" class="form-input-text" placeholder="Asistidores local">
+          <label for="modal-home-assists">Asistidores Local</label>
+          <div class="player-select-container">
+            <select id="home-assists-select" class="form-input-text">
+              <option value="">Agregar jugador...</option>
+            </select>
+          </div>
+          <input type="text" id="modal-home-assists" class="form-input-text" placeholder="Ej. L. Messi">
         </div>
 
         <div class="form-group">
-          <label for="modal-away-assists">Asistidores Visitante (ej. A. Di María)</label>
-          <input type="text" id="modal-away-assists" class="form-input-text" placeholder="Asistidores visitante">
+          <label for="modal-away-assists">Asistidores Visitante</label>
+          <div class="player-select-container">
+            <select id="away-assists-select" class="form-input-text">
+              <option value="">Agregar jugador...</option>
+            </select>
+          </div>
+          <input type="text" id="modal-away-assists" class="form-input-text" placeholder="Ej. A. Di María">
         </div>
 
         <div class="modal-actions">
@@ -606,7 +633,43 @@
       document.getElementById('modal-home-assists').value = (freshMatch.home_assists && freshMatch.home_assists !== 'null') ? freshMatch.home_assists : '';
       document.getElementById('modal-away-assists').value = (freshMatch.away_assists && freshMatch.away_assists !== 'null') ? freshMatch.away_assists : '';
 
+      // Renderizar jugadores en listas desplegables
+      // Renderizar jugadores en listas desplegables
+      const homePlayers = homeTeamInfo ? (homeTeamInfo.jugadores || []).map(p => p.nombreCompleto) : [];
+      const awayPlayers = awayTeamInfo ? (awayTeamInfo.jugadores || []).map(p => p.nombreCompleto) : [];
+      
+      populatePlayerSelect('home-players-select', 'modal-home-scorers', homePlayers);
+      populatePlayerSelect('away-players-select', 'modal-away-scorers', awayPlayers);
+      populatePlayerSelect('home-assists-select', 'modal-home-assists', homePlayers);
+      populatePlayerSelect('away-assists-select', 'modal-away-assists', awayPlayers);
+
       document.getElementById('edit-match-modal').classList.add('active');
+    }
+
+    /**
+     * Llena el select con jugadores y maneja la inserción en el input
+     */
+    function populatePlayerSelect(selectId, inputId, players) {
+      const select = document.getElementById(selectId);
+      select.innerHTML = '<option value="">Agregar jugador...</option>';
+      if (!players || players.length === 0) return;
+      
+      players.forEach(p => {
+        const opt = document.createElement('option');
+        opt.value = p;
+        opt.textContent = p;
+        select.appendChild(opt);
+      });
+      
+      select.onchange = () => {
+        if (select.value) {
+          const input = document.getElementById(inputId);
+          const val = input.value.trim();
+          input.value = val ? `${val}, ${select.value} ` : `${select.value} `;
+          input.focus();
+          select.value = ''; // Reset the select
+        }
+      };
     }
 
     /**
