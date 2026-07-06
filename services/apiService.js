@@ -449,6 +449,35 @@ class APIService {
   }
 
   /**
+   * Limpia todos los resultados manuales (deja los partidos en 0)
+   */
+  static async clearAllResults() {
+    const matches = await this.getAllMatches();
+    matches.forEach(m => {
+      m.home_score = null;
+      m.away_score = null;
+      m.finished = 'FALSE';
+      m.home_scorers = 'null';
+      m.away_scorers = 'null';
+      m.home_assists = 'null';
+      m.away_assists = 'null';
+      m.winner_decided = '';
+      
+      if (m.type !== 'group') {
+        m.home_team_id = '';
+        m.away_team_id = '';
+        m.home_team_name_en = '';
+        m.away_team_name_en = '';
+        m.home_team_name_fa = '';
+        m.away_team_name_fa = '';
+      }
+    });
+    localStorage.setItem('worldcup2026_matches', JSON.stringify(matches));
+    console.log('[API] Todos los resultados han sido limpiados localmente.');
+    window.location.reload();
+  }
+
+  /**
    * Actualiza el resultado de un partido y propaga el ganador
    * @param {string|number} matchId 
    * @param {Object} updatedFields 
@@ -464,14 +493,119 @@ class APIService {
       ...updatedFields
     };
 
-    // Propagar ganador si es un partido finalizado de playoff
+    // Propagar ganador si es un partido finalizado
     const isFinished = matches[index].finished === 'TRUE' || matches[index].finished === true || matches[index].finished === 'true';
     if (matches[index].type !== 'group' && isFinished) {
       await this.propagateWinner(matches[index], matches);
+    } else if (matches[index].type === 'group' && isFinished) {
+      const groupMatches = matches.filter(m => m.type === 'group');
+      const allGroupFinished = groupMatches.every(m => m.finished === 'TRUE' || m.finished === true || m.finished === 'true');
+      if (allGroupFinished) {
+        await this.generateR32Bracket(matches);
+      }
     }
 
     localStorage.setItem('worldcup2026_matches', JSON.stringify(matches));
     return matches[index];
+  }
+
+  /**
+   * Genera los cruces de 16avos de final (R32) dinámicamente según el formato de la FIFA.
+   */
+  static async generateR32Bracket(allMatches) {
+    const GroupController = (await import('../controllers/GroupController.js')).default;
+    const groupCtrl = new GroupController();
+    await groupCtrl.init();
+
+    const groupLetters = ['A','B','C','D','E','F','G','H','I','J','K','L'];
+    const winners = {};
+    const runners = {};
+    const thirds = [];
+
+    groupLetters.forEach(letter => {
+      const standings = groupCtrl.getGroupStandings(letter);
+      if (standings && standings.standings.length >= 3) {
+        winners[letter] = standings.standings[0];
+        runners[letter] = standings.standings[1];
+        
+        thirds.push({ group: letter, team: standings.standings[2] });
+      }
+    });
+
+    if (thirds.length < 12) return; // No están todos los grupos completados
+
+    // Ordenar a los terceros
+    thirds.sort((a, b) => {
+      const ta = a.team;
+      const tb = b.team;
+      if (tb.points !== ta.points) return tb.points - ta.points;
+      if (tb.goalDifference !== ta.goalDifference) return tb.goalDifference - ta.goalDifference;
+      if (tb.goalsFor !== ta.goalsFor) return tb.goalsFor - ta.goalsFor;
+      return ta.teamName.localeCompare(tb.teamName);
+    });
+
+    const top8Thirds = thirds.slice(0, 8);
+    const thirdGroups = top8Thirds.map(t => t.group).sort();
+
+    // Mapeo oficial de enfrentamientos para los terceros
+    const thirdSlots = [
+      { matchId: '74', winnerGroup: 'E', validThirds: ['A','B','C','D','F'] },
+      { matchId: '77', winnerGroup: 'I', validThirds: ['C','D','F','G','H'] },
+      { matchId: '79', winnerGroup: 'A', validThirds: ['C','E','F','H','I'] },
+      { matchId: '80', winnerGroup: 'L', validThirds: ['E','H','I','J','K'] },
+      { matchId: '81', winnerGroup: 'D', validThirds: ['B','E','F','I','J'] },
+      { matchId: '82', winnerGroup: 'G', validThirds: ['A','E','H','I','J'] },
+      { matchId: '85', winnerGroup: 'B', validThirds: ['E','F','G','I','J'] },
+      { matchId: '87', winnerGroup: 'K', validThirds: ['D','E','I','J','L'] }
+    ];
+
+    function findAssignment(remainingGroups, slotIndex, currentAssignment) {
+      if (slotIndex === 8) return currentAssignment;
+      const slot = thirdSlots[slotIndex];
+      for (let i = 0; i < remainingGroups.length; i++) {
+        const group = remainingGroups[i];
+        if (slot.validThirds.includes(group) && group !== slot.winnerGroup) {
+          const newRemaining = [...remainingGroups];
+          newRemaining.splice(i, 1);
+          const res = findAssignment(newRemaining, slotIndex + 1, { ...currentAssignment, [slot.matchId]: group });
+          if (res) return res;
+        }
+      }
+      return null;
+    }
+
+    const assignment = findAssignment(thirdGroups, 0, {}) || {};
+
+    const setTeam = (matchId, slot, teamData) => {
+      const idx = allMatches.findIndex(m => String(m.id) === String(matchId));
+      if (idx !== -1 && teamData) {
+        if (slot === 'home') {
+          allMatches[idx].home_team_id = teamData.teamId;
+          allMatches[idx].home_team_name_en = teamData.teamName;
+        } else {
+          allMatches[idx].away_team_id = teamData.teamId;
+          allMatches[idx].away_team_name_en = teamData.teamName;
+        }
+      }
+    };
+
+    thirdSlots.forEach(slot => {
+      setTeam(slot.matchId, 'home', winners[slot.winnerGroup]);
+      const thirdGroupAssigned = assignment[slot.matchId];
+      if (thirdGroupAssigned) {
+        const thirdTeamData = top8Thirds.find(t => t.group === thirdGroupAssigned).team;
+        setTeam(slot.matchId, 'away', thirdTeamData);
+      }
+    });
+
+    setTeam('73', 'home', runners['A']); setTeam('73', 'away', runners['B']);
+    setTeam('75', 'home', winners['F']); setTeam('75', 'away', runners['C']);
+    setTeam('76', 'home', winners['C']); setTeam('76', 'away', runners['F']);
+    setTeam('78', 'home', runners['E']); setTeam('78', 'away', runners['I']);
+    setTeam('83', 'home', runners['K']); setTeam('83', 'away', runners['L']);
+    setTeam('84', 'home', winners['H']); setTeam('84', 'away', runners['J']);
+    setTeam('86', 'home', winners['J']); setTeam('86', 'away', runners['H']);
+    setTeam('88', 'home', runners['D']); setTeam('88', 'away', runners['G']);
   }
 
   /**

@@ -123,18 +123,23 @@
           Actualmente ingresado como: <strong id="logged-username" style="color: var(--color-accent);"></strong>
           <br>
           <a href="#" id="btn-logout" style="color: var(--color-danger); display: inline-block; margin-top: 0.5rem;">Cerrar Sesión</a>
+          <br><br>
+          <button id="btn-reset-results" class="btn-login" style="background: var(--color-danger); margin-top: 1rem;">Limpiar Resultados y Reiniciar Eliminatorias</button>
         </div>
       </div>
     </div>
   </main>
 
   <script type="module">
+    import APIService from '../services/apiService.js';
+    
     document.addEventListener('DOMContentLoaded', () => {
       const currentUser = localStorage.getItem('worldcup2026_user');
       const loginForm = document.getElementById('login-form');
       const statusDiv = document.getElementById('logged-user-status');
       const usernameSpan = document.getElementById('logged-username');
       const logoutBtn = document.getElementById('btn-logout');
+      const resetResultsBtn = document.getElementById('btn-reset-results');
 
       if (currentUser) {
         loginForm.style.display = 'none';
@@ -158,6 +163,15 @@
         alert('Sesión cerrada.');
         window.location.reload();
       });
+
+      if (resetResultsBtn) {
+        resetResultsBtn.addEventListener('click', async (e) => {
+          e.preventDefault();
+          if (confirm('¿Estás seguro de que quieres limpiar todos los resultados y reiniciar el torneo? Esto borrará todos los goles y equipos de las rondas eliminatorias.')) {
+            await APIService.clearAllResults();
+          }
+        });
+      }
     });
   </script>
 </body>
