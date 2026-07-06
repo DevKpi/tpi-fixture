@@ -10,6 +10,7 @@ class AppController {
     this.nextMatch = null;
     this.tournamentStats = null;
     this.recentMatches = [];
+    this.teams = [];
     this.countdownInterval = null;
   }
 
@@ -34,16 +35,18 @@ class AppController {
   async loadDashboardData() {
     console.log('[App] Cargando datos del dashboard...');
     
-    // Cargar datos en paralelo
-    const [nextMatch, stats, recentMatches] = await Promise.all([
+    // Cargar datos en paralelo (incluye equipos para banderas)
+    const [nextMatch, stats, recentMatches, teams] = await Promise.all([
       APIService.getNextMatch(),
       APIService.getTournamentStats(),
-      APIService.getRecentMatches(3)
+      APIService.getRecentMatches(3),
+      APIService.getAllTeams()
     ]);
 
     this.nextMatch = nextMatch;
     this.tournamentStats = stats;
     this.recentMatches = recentMatches;
+    this.teams = teams;
 
     // Actualizar UI
     this.updateNextMatchDisplay();
@@ -64,13 +67,16 @@ class AppController {
     }
 
     const match = this.nextMatch;
-    const homeTeam = match.home_team_name_en || 'Por confirmar';
-    const awayTeam = match.away_team_name_en || 'Por confirmar';
+    const homeTeam = match.home_team_name_en || match.home_team_label || 'Por confirmar';
+    const awayTeam = match.away_team_name_en || match.away_team_label || 'Por confirmar';
+    const homeFlag = this.getTeamFlag(match.home_team_id);
+    const awayFlag = this.getTeamFlag(match.away_team_id);
     const dateTime = this.formatDateTime(APIService.getMatchDate(match));
 
     container.innerHTML = `
       <div class="match-card">
         <div class="match-team home">
+          <img class="team-flag" src="${homeFlag}" alt="Bandera de ${homeTeam}">
           <div class="team-name">${homeTeam}</div>
         </div>
         <div class="match-info">
@@ -79,6 +85,7 @@ class AppController {
           <div class="match-group">Grupo ${match.grupo || '—'}</div>
         </div>
         <div class="match-team away">
+          <img class="team-flag" src="${awayFlag}" alt="Bandera de ${awayTeam}">
           <div class="team-name">${awayTeam}</div>
         </div>
       </div>
@@ -112,16 +119,29 @@ class AppController {
     }
 
     const resultsHTML = this.recentMatches
-      .map(match => `
-        <div class="result-item">
-          <div class="result-team home">${match.home_team_name_en || 'Por confirmar'}</div>
-          <div class="result-score">
-            <span class="score">${match.home_score} - ${match.away_score}</span>
-            <span class="group">${match.grupo || '—'}</span>
+      .map(match => {
+        const homeTeam = match.home_team_name_en || match.home_team_label || 'Por confirmar';
+        const awayTeam = match.away_team_name_en || match.away_team_label || 'Por confirmar';
+        const homeFlag = this.getTeamFlag(match.home_team_id);
+        const awayFlag = this.getTeamFlag(match.away_team_id);
+
+        return `
+          <div class="result-item">
+            <div class="result-team home">
+              <img class="team-flag" src="${homeFlag}" alt="Bandera de ${homeTeam}">
+              <span>${homeTeam}</span>
+            </div>
+            <div class="result-score">
+              <span class="score">${match.home_score} - ${match.away_score}</span>
+              <span class="group">${match.grupo || '—'}</span>
+            </div>
+            <div class="result-team away">
+              <img class="team-flag" src="${awayFlag}" alt="Bandera de ${awayTeam}">
+              <span>${awayTeam}</span>
+            </div>
           </div>
-          <div class="result-team away">${match.away_team_name_en || 'Por confirmar'}</div>
-        </div>
-      `)
+        `;
+      })
       .join('');
 
     container.innerHTML = resultsHTML;
@@ -130,6 +150,11 @@ class AppController {
   /**
    * Inicia el countdown hacia el próximo partido
    */
+  getTeamFlag(teamId) {
+    const team = this.teams.find(t => String(t.id) === String(teamId));
+    return team?.bandera || team?.flag || 'https://flagcdn.com/w80/un.png';
+  }
+
   startCountdown() {
     if (this.countdownInterval) clearInterval(this.countdownInterval);
 
