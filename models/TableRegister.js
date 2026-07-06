@@ -25,3 +25,5 @@ class RegistroTabla{
     }
 
 }
+
+export default RegistroTabla;

@@ -22,3 +22,5 @@ class Eliminatoria{
     }
 
 }
+
+export default Eliminatorias;

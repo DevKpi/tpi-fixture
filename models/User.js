@@ -20,3 +20,5 @@ class User {
     }
 
 }
+
+export default Usuario;

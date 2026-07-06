@@ -5,7 +5,7 @@ class Seleccion{
         this.bandera = bandera;
         this.entrenador = entrenador;
         this.jugadores = jugadores || []; // Lista de objetos Jugador
-        this.grupo = grupo;
+        this.grupo = rawTeam.groups || rawTeam.grupo || grupo || '';
 
         // Propiedades de la API para compatibilidad con las vistas existentes
         this.name_en = rawTeam.name_en || nombre || '';
@@ -13,7 +13,6 @@ class Seleccion{
         this.flag = rawTeam.flag || bandera || '';
         this.fifa_code = rawTeam.fifa_code || rawTeam.codigo || '';
         this.iso2 = rawTeam.iso2 || '';
-        this.groups = rawTeam.groups || rawTeam.grupo || grupo || '';
         this.plantilla = this.jugadores;
     }
 

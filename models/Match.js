@@ -11,7 +11,7 @@ class Partido{
         this.goles = goles; // Lista de goles
         this.estado = estado; // 'PENDIENTE' / 'FINALIZADO'
         this.fase = fase;
-        this.grupo = grupo;
+        this.grupo = rawMatch.group || rawMatch.grupo || grupo || '';
 
         // Propiedades de la API para compatibilidad con vistas
         this.home_team_id = rawMatch.home_team_id || '';

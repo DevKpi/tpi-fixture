@@ -11,3 +11,5 @@ class Gol {
         
     }
 }
+
+export default Gol;
