@@ -36,6 +36,40 @@ class APIService {
     }
   }
 
+  /**
+   * Obtiene la fecha exacta del partido ajustada a la zona horaria del estadio
+   * @param {Object} match - Datos del partido
+   * @returns {Date} Objeto Date absoluto
+   */
+  static getMatchDate(match) {
+    if (!match?.local_date) return null;
+
+    const regionMap = {
+      '14': 'Western', '8': 'Eastern', '13': 'Western', '15': 'Western',
+      '3': 'Central', '1': 'Central', '2': 'Central', '5': 'Central',
+      '16': 'Western', '7': 'Eastern', '9': 'Eastern', '6': 'Central',
+      '10': 'Eastern', '4': 'Central', '11': 'Eastern', '12': 'Eastern'
+    };
+    const timezoneOffsets = {
+      'Western': '-07:00',
+      'Central': '-05:00',
+      'Eastern': '-04:00'
+    };
+    const stadiumId = match.stadium_id || match.estadio;
+    const region = regionMap[stadiumId] || 'Eastern';
+    const offset = timezoneOffsets[region];
+    const value = String(match.local_date).trim();
+
+    const isoMatch = value.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})\s+(\d{1,2}):(\d{2})$/);
+    if (isoMatch) {
+      const [, month, day, year, hour, minute] = isoMatch;
+      const isoString = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}T${hour.padStart(2, '0')}:${minute}${offset}`;
+      return new Date(isoString);
+    }
+
+    return parseApiDate(value);
+  }
+
   static async getAllMatches() {
     try {
       let games = [];
@@ -330,15 +364,15 @@ class APIService {
           const isPending = match.finished === 'FALSE' || match.finished === false || match.finished === 'false';
           if (!isPending) return false;
 
-          const matchDate = parseApiDate(match.local_date);
+          const matchDate = APIService.getMatchDate(match);
           return !!matchDate && matchDate.getTime() > now.getTime();
         })
         .sort((a, b) => {
-          const dateA = parseApiDate(a.local_date);
-          const dateB = parseApiDate(b.local_date);
+          const dateA = APIService.getMatchDate(a);
+          const dateB = APIService.getMatchDate(b);
           return (dateA?.getTime() ?? Number.POSITIVE_INFINITY) - (dateB?.getTime() ?? Number.POSITIVE_INFINITY);
         });
-      
+
       return upcoming.length > 0 ? upcoming[0] : null;
     } catch (error) {
       console.error('Error fetching next match:', error);
@@ -357,11 +391,11 @@ class APIService {
       const finished = matches
         .filter(match => match.finished === 'TRUE' || match.finished === true || match.finished === 'true')
         .sort((a, b) => {
-          const dateA = parseApiDate(a.local_date);
-          const dateB = parseApiDate(b.local_date);
+          const dateA = APIService.getMatchDate(a);
+          const dateB = APIService.getMatchDate(b);
           return (dateB?.getTime() ?? Number.NEGATIVE_INFINITY) - (dateA?.getTime() ?? Number.NEGATIVE_INFINITY);
         });
-      
+
       return finished.slice(0, limit);
     } catch (error) {
       console.error('Error fetching recent matches:', error);
