@@ -6,6 +6,7 @@
 import Partido from '../models/Match.js';
 import Seleccion from '../models/CountryTeams.js';
 import Jugador from '../models/Player.js';
+import { parseApiDate } from '../utils/dateUtils.mjs';
 
 const API_BASE_URL = 'https://worldcup26.ir';
 
@@ -323,12 +324,19 @@ class APIService {
   static async getNextMatch() {
     try {
       const matches = await this.getAllMatches();
+      const now = new Date();
       const upcoming = matches
-        .filter(match => match.finished === 'FALSE' || match.finished === false || match.finished === 'false')
+        .filter(match => {
+          const isPending = match.finished === 'FALSE' || match.finished === false || match.finished === 'false';
+          if (!isPending) return false;
+
+          const matchDate = parseApiDate(match.local_date);
+          return !!matchDate && matchDate.getTime() > now.getTime();
+        })
         .sort((a, b) => {
-          const dateA = new Date(a.local_date.replace(/(\d+)\/(\d+)\/(\d+) (\d+):(\d+)/, '$3-$1-$2T$4:$5'));
-          const dateB = new Date(b.local_date.replace(/(\d+)\/(\d+)\/(\d+) (\d+):(\d+)/, '$3-$1-$2T$4:$5'));
-          return dateA - dateB;
+          const dateA = parseApiDate(a.local_date);
+          const dateB = parseApiDate(b.local_date);
+          return (dateA?.getTime() ?? Number.POSITIVE_INFINITY) - (dateB?.getTime() ?? Number.POSITIVE_INFINITY);
         });
       
       return upcoming.length > 0 ? upcoming[0] : null;
@@ -349,9 +357,9 @@ class APIService {
       const finished = matches
         .filter(match => match.finished === 'TRUE' || match.finished === true || match.finished === 'true')
         .sort((a, b) => {
-          const dateA = new Date(a.local_date.replace(/(\d+)\/(\d+)\/(\d+) (\d+):(\d+)/, '$3-$1-$2T$4:$5'));
-          const dateB = new Date(b.local_date.replace(/(\d+)\/(\d+)\/(\d+) (\d+):(\d+)/, '$3-$1-$2T$4:$5'));
-          return dateB - dateA;
+          const dateA = parseApiDate(a.local_date);
+          const dateB = parseApiDate(b.local_date);
+          return (dateB?.getTime() ?? Number.NEGATIVE_INFINITY) - (dateA?.getTime() ?? Number.NEGATIVE_INFINITY);
         });
       
       return finished.slice(0, limit);

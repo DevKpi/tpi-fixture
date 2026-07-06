@@ -4,6 +4,7 @@
  */
 
 import APIService from './services/apiService.js';
+import { parseApiDate } from './utils/dateUtils.mjs';
 
 class AppController {
   constructor() {
@@ -139,12 +140,15 @@ class AppController {
         return;
       }
 
-      const matchDate = new Date(
-        this.nextMatch.local_date.replace(/(\d+)\/(\d+)\/(\d+) (\d+):(\d+)/, '$3-$1-$2T$4:$5')
-      );
+      const matchDate = parseApiDate(this.nextMatch.local_date);
+
+      if (!matchDate) {
+        this.clearCountdown();
+        return;
+      }
 
       const now = new Date();
-      const diff = matchDate - now;
+      const diff = matchDate.getTime() - now.getTime();
 
       if (diff <= 0) {
         this.clearCountdown();
