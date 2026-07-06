@@ -101,6 +101,22 @@ class GroupController {
       const homeScore = parseInt(match.home_score) || 0;
       const awayScore = parseInt(match.away_score) || 0;
 
+      // Asegurar que los equipos existan en el mapa incluso si teams.json no tiene la propiedad grupo
+      if (!standingsMap[homeId]) {
+        standingsMap[homeId] = {
+          teamId: homeId,
+          teamName: match.home_team_name_en,
+          played: 0, wins: 0, draws: 0, losses: 0, goalsFor: 0, goalsAgainst: 0, goalDifference: 0, points: 0
+        };
+      }
+      if (!standingsMap[awayId]) {
+        standingsMap[awayId] = {
+          teamId: awayId,
+          teamName: match.away_team_name_en,
+          played: 0, wins: 0, draws: 0, losses: 0, goalsFor: 0, goalsAgainst: 0, goalDifference: 0, points: 0
+        };
+      }
+
       // Actualizar equipo local
       if (standingsMap[homeId]) {
         const stats = standingsMap[homeId];
