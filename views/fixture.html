@@ -584,7 +584,7 @@
       currentMatchObj = freshMatch;
 
       document.getElementById('modal-match-id').value = freshMatch.id;
-      document.getElementById('modal-match-title').textContent = `Editar Resultado - Grupo ${freshMatch.group} (Partido #${freshMatch.id})`;
+      document.getElementById('modal-match-title').textContent = `Editar Resultado - Grupo ${freshMatch.grupo} (Partido #${freshMatch.id})`;
 
       const allTeams = groupController.teams;
       const homeTeamInfo = allTeams.find(t => String(t.id) === String(freshMatch.home_team_id));
