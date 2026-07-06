@@ -66,7 +66,7 @@ class AppController {
     const match = this.nextMatch;
     const homeTeam = match.home_team_name_en || 'Por confirmar';
     const awayTeam = match.away_team_name_en || 'Por confirmar';
-    const dateTime = this.formatDateTime(match.local_date);
+    const dateTime = this.formatDateTime(APIService.getMatchDate(match));
 
     container.innerHTML = `
       <div class="match-card">
@@ -139,9 +139,7 @@ class AppController {
         return;
       }
 
-      const matchDate = new Date(
-        this.nextMatch.local_date.replace(/(\d+)\/(\d+)\/(\d+) (\d+):(\d+)/, '$3-$1-$2T$4:$5')
-      );
+      const matchDate = APIService.getMatchDate(this.nextMatch);
 
       const now = new Date();
       const diff = matchDate - now;
@@ -182,25 +180,29 @@ class AppController {
   }
 
   /**
-   * Formatea una fecha de la API al formato legible
-   * @param {string} dateString - Fecha en formato "06/11/2026 13:00"
+   * Formatea un Date al formato legible en hora local
+   * @param {Date} dateObj - Fecha absoluta
    * @returns {string} Fecha formateada
    */
-  formatDateTime(dateString) {
-    if (!dateString) return 'Fecha por confirmar';
+  formatDateTime(dateObj) {
+    if (!dateObj || isNaN(dateObj.getTime())) return 'Fecha por confirmar';
     
     try {
-      const [date, time] = dateString.split(' ');
-      const [month, day, year] = date.split('/');
+      const day = dateObj.getDate();
+      const month = dateObj.getMonth();
+      const year = dateObj.getFullYear();
+      const hours = String(dateObj.getHours()).padStart(2, '0');
+      const minutes = String(dateObj.getMinutes()).padStart(2, '0');
+      
       const monthNames = [
         'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
         'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
       ];
       
-      return `${parseInt(day)} de ${monthNames[parseInt(month) - 1]} de ${year} a las ${time}`;
+      return `${day} de ${monthNames[month]} de ${year} a las ${hours}:${minutes}`;
     } catch (error) {
       console.error('Error formatting date:', error);
-      return dateString;
+      return 'Fecha inválida';
     }
   }
 

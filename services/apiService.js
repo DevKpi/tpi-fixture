@@ -35,6 +35,31 @@ class APIService {
     }
   }
 
+  /**
+   * Obtiene la fecha exacta del partido ajustada a la zona horaria del estadio
+   * @param {Object} match - Datos del partido
+   * @returns {Date} Objeto Date absoluto
+   */
+  static getMatchDate(match) {
+    const regionMap = {
+      '14': 'Western', '8': 'Eastern', '13': 'Western', '15': 'Western',
+      '3': 'Central', '1': 'Central', '2': 'Central', '5': 'Central',
+      '16': 'Western', '7': 'Eastern', '9': 'Eastern', '6': 'Central',
+      '10': 'Eastern', '4': 'Central', '11': 'Eastern', '12': 'Eastern'
+    };
+    const timezoneOffsets = {
+      'Western': '-07:00',
+      'Central': '-05:00',
+      'Eastern': '-04:00'
+    };
+    const stadiumId = match.stadium_id || match.estadio;
+    const region = regionMap[stadiumId] || 'Eastern';
+    const offset = timezoneOffsets[region];
+    // local_date is MM/DD/YYYY HH:mm
+    const isoString = match.local_date.replace(/(\d+)\/(\d+)\/(\d+) (\d+):(\d+)/, `$3-$1-$2T$4:$5${offset}`);
+    return new Date(isoString);
+  }
+
   static async getAllMatches() {
     try {
       let games = [];
@@ -326,15 +351,8 @@ class APIService {
       const now = new Date();
       const upcoming = matches
         .filter(match => match.finished === 'FALSE' || match.finished === false || match.finished === 'false')
-        .filter(match => {
-          const matchDate = new Date(match.local_date.replace(/(\d+)\/(\d+)\/(\d+) (\d+):(\d+)/, '$3-$1-$2T$4:$5'));
-          return matchDate > now;
-        })
-        .sort((a, b) => {
-          const dateA = new Date(a.local_date.replace(/(\d+)\/(\d+)\/(\d+) (\d+):(\d+)/, '$3-$1-$2T$4:$5'));
-          const dateB = new Date(b.local_date.replace(/(\d+)\/(\d+)\/(\d+) (\d+):(\d+)/, '$3-$1-$2T$4:$5'));
-          return dateA - dateB;
-        });
+        .filter(match => APIService.getMatchDate(match) > now)
+        .sort((a, b) => APIService.getMatchDate(a) - APIService.getMatchDate(b));
       
       return upcoming.length > 0 ? upcoming[0] : null;
     } catch (error) {
@@ -353,11 +371,7 @@ class APIService {
       const matches = await this.getAllMatches();
       const finished = matches
         .filter(match => match.finished === 'TRUE' || match.finished === true || match.finished === 'true')
-        .sort((a, b) => {
-          const dateA = new Date(a.local_date.replace(/(\d+)\/(\d+)\/(\d+) (\d+):(\d+)/, '$3-$1-$2T$4:$5'));
-          const dateB = new Date(b.local_date.replace(/(\d+)\/(\d+)\/(\d+) (\d+):(\d+)/, '$3-$1-$2T$4:$5'));
-          return dateB - dateA;
-        });
+        .sort((a, b) => APIService.getMatchDate(b) - APIService.getMatchDate(a));
       
       return finished.slice(0, limit);
     } catch (error) {
