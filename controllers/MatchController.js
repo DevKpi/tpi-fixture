@@ -67,7 +67,7 @@ class MatchController {
    * @returns {boolean}
    */
   isGroupMatch(match) {
-    return match && (match.type === 'group' || (match.group && match.group.match(/^[A-L]$/)));
+    return match && (match.type === 'group' || (match.grupo && match.grupo.match(/^[A-L]$/)));
   }
 
   /**
@@ -149,7 +149,7 @@ class MatchController {
       awayTeamId: match.away_team_id,
       homeScore: parseInt(match.home_score) || 0,
       awayScore: parseInt(match.away_score) || 0,
-      group: match.group,
+      group: match.grupo,
       matchday: match.matchday,
       date: match.local_date,
       stadium: match.stadium_id,

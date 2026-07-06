@@ -182,7 +182,7 @@ class GoalsController {
           awayTeam: match.away_team_name_en,
           goals: homeGoals,
           date: match.local_date,
-          group: match.group
+          group: match.grupo
         });
       }
 
@@ -194,7 +194,7 @@ class GoalsController {
           awayTeam: match.away_team_name_en,
           goals: awayGoals,
           date: match.local_date,
-          group: match.group
+          group: match.grupo
         });
       }
     });
@@ -265,7 +265,7 @@ class GoalsController {
     const phases = {};
 
     this.matches.forEach(match => {
-      const phase = match.type || (match.group && match.group.match(/^[A-L]$/) ? 'group' : 'unknown');
+      const phase = match.type || (match.grupo && match.grupo.match(/^[A-L]$/) ? 'group' : 'unknown');
       
       if (!phases[phase]) {
         phases[phase] = {

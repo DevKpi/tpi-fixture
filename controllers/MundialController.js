@@ -105,7 +105,7 @@ class MundialController {
    * @returns {Array} Array de equipos
    */
   getTeamsByGroup(groupName) {
-    return this.teams.filter(t => t.groups === groupName);
+    return this.teams.filter(t => t.grupo === groupName);
   }
 
   /**
@@ -124,7 +124,7 @@ class MundialController {
    */
   getMatchesByPhase(phase) {
     if (phase === 'group') {
-      return this.matches.filter(m => m.type === 'group' || (m.group && m.group.match(/^[A-L]$/)));
+      return this.matches.filter(m => m.type === 'group' || (m.grupo && m.grupo.match(/^[A-L]$/)));
     }
     return this.matches.filter(m => m.type === phase);
   }
@@ -135,7 +135,7 @@ class MundialController {
    * @returns {Array} Partidos del grupo
    */
   getMatchesByGroup(groupName) {
-    return this.matches.filter(m => m.group === groupName);
+    return this.matches.filter(m => m.grupo === groupName);
   }
 
   /**
@@ -312,7 +312,7 @@ class MundialController {
       awayScore: parseInt(match.away_score) || 0,
       isHome: String(match.home_team_id) === String(teamId),
       finished: match.finished === 'TRUE' || match.finished === true,
-      group: match.group,
+      group: match.grupo,
       date: match.local_date
     }));
   }

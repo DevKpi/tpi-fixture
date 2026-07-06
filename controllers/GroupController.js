@@ -59,7 +59,7 @@ class GroupController {
    * @returns {Array} Equipos del grupo
    */
   getTeamsByGroup(groupName) {
-    return this.teams.filter(t => t.groups === groupName);
+    return this.teams.filter(t => t.grupo === groupName);
   }
 
   /**
@@ -178,7 +178,7 @@ class GroupController {
    * @returns {Array} Partidos del grupo
    */
   getGroupMatches(groupName) {
-    return this.matches.filter(m => m.group === groupName);
+    return this.matches.filter(m => m.grupo === groupName);
   }
 
   /**
