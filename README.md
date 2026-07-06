@@ -11,7 +11,7 @@ Permite:
 - 📊 Ver el fixture completo (grupos y eliminatorias) con filtros
 - ✏️ Registrar resultados y goles por jugador
 - 📈 Calcular tablas de posiciones automáticamente
-- 🏆 Generar el árbol de playoff (octavos → final) desde los clasificados
+- 🏆 Generar el árbol de playoff (dieciseisavos → final) desde los clasificados
 - ⚽ Ranking de goleadores y asistencias
 - ⏰ Countdown al próximo partido
 - 💾 Persistencia en localStorage (los datos sobreviven a recargas)
@@ -46,54 +46,55 @@ O con la extensión **Live Server** de VS Code.
 ## 📁 Estructura
 
 ```
-fifa-wc2026-tpi/
-├── models/
-│   ├── Users.js
-│   ├── Mundial.js            ← coordinador principal
-│   ├── Group.js
-│   ├── CountryTeams.js
-│   ├── Player.js
-│   ├── Match.js
-│   ├── Goal.js
-│   ├── Fase.js
-│   ├── LlaveEliminatoria.js  
-│   ├── Eliminatorias.js      ← motor del árbol de playoff
-│   ├── Table.js
-│   └── TableRegister.js
+tpi-fixture/
 ├── controllers/
-│   ├── MundialController.js
+│   ├── AssistController.js
+│   ├── CleanSheet.js
+│   ├── EliminationController.js
+│   ├── GoalsController.js
 │   ├── GroupController.js
 │   ├── MatchController.js
-│   ├── CleanSheet.js
-│   ├── GoalsController.js
-│   ├── AssistController.js
-│   └── MatchController.js
-├── views/  
-│   ├── fixture.html            → 48 partidos + tabla por grupo
-│   ├── match-detail.html    → Registrar goles
-│   ├── tops.html         → Rankings
-│   ├── login.html         → login para saber a quien se le guarda el progreso
-│   ├── elimination-bracket.html → Árbol de playoff (Fase 2)
-│   └── styles/styles.css
+│   └── MundialController.js
 ├── data/
-│   ├── full-fixture.json   (104 partidos en total)
-│   └── teams.json            (48 selecciones × 23 jugadores)
-├── services/
-│   └── apiService.js
-├── test/
-│   ├── Gol.test.js
-│   ├── Partido.test.js
-│   ├── Tabla.test.js
-│   ├── Mundial.test.js
-│   └── Eliminatorias.test.js 
+│   ├── full-fixture.json
+│   └── teams.json
 ├── docs/
 │   ├── diagram-class.md
 │   ├── diagram-class.png
-│   └── diagram-sequence.md
+│   ├── Diagrama de Clases
+│   └── diagrama-grafico-relaciones.png
+├── models/
+│   ├── CountryTeams.js
+│   ├── Fase.js
+│   ├── Goal.js
+│   ├── Group.js
+│   ├── KnockOutStage.js
+│   ├── Match.js
+│   ├── Mundial.js
+│   ├── Player.js
+│   ├── Table.js
+│   ├── TableRegister.js
+│   └── User.js
+├── scratch/
+│   ├── generate-teams-json.js
+│   ├── test-assists-raw.js
+│   ├── test-groups.js
+│   ├── test-knockout.js
+│   ├── test-single-team.js
+│   └── test-teams.js
+├── services/
+│   └── apiService.js
+├── views/  
+│   ├── elimination-bracket.html
+│   ├── fixture.html
+│   ├── login.html
+│   ├── match-detail.html
+│   ├── tops.html
+│   └── styles/
+│       └── styles.css
+├── index.html
 ├── main.js
-├── index.html              → Dashboard + countdown
-├── package.json
-└── .gitignore
+└── README.md
 ```
 
 ---
