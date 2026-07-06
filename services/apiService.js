@@ -281,7 +281,7 @@ class APIService {
   static async getTeamsByGroup(groupName) {
     try {
       const teams = await this.getAllTeams();
-      return teams.filter(t => t.groups === groupName);
+      return teams.filter(t => t.grupo === groupName);
     } catch (error) {
       console.error(`Error fetching teams by group ${groupName}:`, error);
       return [];
@@ -368,7 +368,7 @@ class APIService {
   static async getGroupPhaseMatches() {
     try {
       const matches = await this.getAllMatches();
-      return matches.filter(match => match.type === 'group' || (match.group && match.group.match(/^[A-L]$/)));
+      return matches.filter(match => match.type === 'group' || (match.grupo && match.grupo.match(/^[A-L]$/)));
     } catch (error) {
       console.error('Error fetching group phase matches:', error);
       return [];
