@@ -76,7 +76,7 @@ class AppController {
         <div class="match-info">
           <div class="match-date">${dateTime}</div>
           <div class="match-vs">VS</div>
-          <div class="match-group">Grupo ${match.group}</div>
+          <div class="match-group">Grupo ${match.grupo}</div>
         </div>
         <div class="match-team away">
           <div class="team-name">${awayTeam}</div>
@@ -117,7 +117,7 @@ class AppController {
           <div class="result-team home">${match.home_team_name_en || 'Por confirmar'}</div>
           <div class="result-score">
             <span class="score">${match.home_score} - ${match.away_score}</span>
-            <span class="group">${match.group}</span>
+            <span class="group">${match.grupo}</span>
           </div>
           <div class="result-team away">${match.away_team_name_en || 'Por confirmar'}</div>
         </div>
