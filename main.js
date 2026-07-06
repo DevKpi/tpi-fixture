@@ -191,7 +191,7 @@ class AppController {
     
     try {
       const [date, time] = dateString.split(' ');
-      const [day, month, year] = date.split('/');
+      const [month, day, year] = date.split('/');
       const monthNames = [
         'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
         'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'

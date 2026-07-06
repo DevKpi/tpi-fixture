@@ -323,8 +323,13 @@ class APIService {
   static async getNextMatch() {
     try {
       const matches = await this.getAllMatches();
+      const now = new Date();
       const upcoming = matches
         .filter(match => match.finished === 'FALSE' || match.finished === false || match.finished === 'false')
+        .filter(match => {
+          const matchDate = new Date(match.local_date.replace(/(\d+)\/(\d+)\/(\d+) (\d+):(\d+)/, '$3-$1-$2T$4:$5'));
+          return matchDate > now;
+        })
         .sort((a, b) => {
           const dateA = new Date(a.local_date.replace(/(\d+)\/(\d+)\/(\d+) (\d+):(\d+)/, '$3-$1-$2T$4:$5'));
           const dateB = new Date(b.local_date.replace(/(\d+)\/(\d+)\/(\d+) (\d+):(\d+)/, '$3-$1-$2T$4:$5'));
