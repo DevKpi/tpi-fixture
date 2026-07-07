@@ -111,10 +111,12 @@ tpi-fixture/
 |---|---|---|
 | **Mundial** | `models/Mundial.js` | Coordinador general. Calcula estadísticas globales, clasifica partidos por fases y retorna goleadores. |
 | **Eliminatoria** | `models/KnockOutStage.js` | Representa un cruce de eliminatorias; extrae goles y determina automáticamente al ganador (incluyendo posibles penales). |
+| **Fase** | `models/Fase.js` | Modela una ronda completa (ej: Fase de Grupos, Cuartos); gestiona colecciones de partidos y rastrea pendientes/finalizados. |
 | **Grupo** | `models/Group.js` | Modela la fase de grupos; procesa los partidos del grupo delegando en `Tabla` para obtener a los clasificados. |
 | **Tabla / RegistroTabla** | `models/Table.js` & `TableRegister.js` | Motor matemático. Procesa iterativamente listas de partidos para acumular puntos, DG, GF, GC y devolver posiciones ordenadas. |
 | **Partido** | `models/Match.js` | Parsea e interpreta datos en crudo (incluyendo fechas). Calcula estado (finalizado, en vivo) y provee resúmenes específicos. |
 | **Gol** | `models/Goal.js` | Entidad que extrae de strings sucios de la API al jugador anotador, su minuto y asistencia; provee su propia descripción. |
+| **Jugador** | `models/Player.js` | Modela la entidad jugador con estadísticas base (goles, asistencias, tarjetas) e inteligencia para acumular méritos. |
 | **Usuario** | `models/User.js` | Maneja la lógica de autenticación simulada (LogIn/LogOut) y cálculo de porcentajes de aciertos (progreso/nivel). |
 | **Equipos** | `models/CountryTeams.js` | Diccionario de selecciones que incluye mapeo inteligente de formaciones y arqueros titulares. |
 
