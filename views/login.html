@@ -123,8 +123,17 @@
           Actualmente ingresado como: <strong id="logged-username" style="color: var(--color-accent);"></strong>
           <br>
           <a href="#" id="btn-logout" style="color: var(--color-danger); display: inline-block; margin-top: 0.5rem;">Cerrar Sesión</a>
-          <br><br>
+          
+          <div style="margin-top: 2rem; margin-bottom: 2rem; background: var(--color-bg); padding: 1.5rem; border-radius: var(--radius); border: 1px solid var(--color-border);">
+            <p style="margin-bottom: 1rem; color: var(--color-text); font-weight: 600; font-size: 1.1rem; text-align: center;">🏆 Tu Progreso en el Torneo</p>
+            <div style="width: 100%; background: var(--color-surface); border-radius: 10px; overflow: hidden; height: 24px; border: 1px solid var(--color-border);">
+              <div id="progress-bar" style="width: 0%; height: 100%; background: linear-gradient(90deg, var(--color-accent), #3b82f6); transition: width 1s ease-out;"></div>
+            </div>
+            <p id="progress-text" style="font-size: 0.95rem; color: var(--color-text-muted); margin-top: 0.8rem; text-align: center;">Calculando progreso...</p>
+          </div>
+
           <button id="btn-reset-results" class="btn-login" style="background: var(--color-danger); margin-top: 1rem;">Limpiar Resultados y Reiniciar Eliminatorias</button>
+          <button id="btn-reset-tournament" class="btn-login" style="background: var(--color-danger); margin-top: 1rem;">Restablecer Fixture</button>
         </div>
       </div>
     </div>
@@ -145,6 +154,18 @@
         loginForm.style.display = 'none';
         statusDiv.style.display = 'block';
         usernameSpan.textContent = currentUser;
+
+        APIService.getAllMatches().then(matches => {
+          const totalMatches = 104;
+          const finishedMatches = matches.filter(m => m.finished === 'TRUE' || m.finished === true || m.finished === 'true').length;
+          const percentage = Math.round((finishedMatches / totalMatches) * 100);
+          
+          document.getElementById('progress-bar').style.width = percentage + '%';
+          document.getElementById('progress-text').textContent = `Has completado ${finishedMatches} de ${totalMatches} partidos (${percentage}%)`;
+        }).catch(err => {
+          console.error("Error al cargar progreso:", err);
+          document.getElementById('progress-text').textContent = "Error al cargar progreso.";
+        });
       }
 
       loginForm.addEventListener('submit', (e) => {
@@ -169,6 +190,15 @@
           e.preventDefault();
           if (confirm('¿Estás seguro de que quieres limpiar todos los resultados y reiniciar el torneo? Esto borrará todos los goles y equipos de las rondas eliminatorias.')) {
             await APIService.clearAllResults();
+          }
+        });
+      }
+
+      const resetTournamentBtn = document.getElementById('btn-reset-tournament');
+      if (resetTournamentBtn) {
+        resetTournamentBtn.addEventListener('click', () => {
+          if (confirm('¿Estás seguro de que quieres restablecer todo el fixture a su estado original? Perderás todos los resultados cargados.')) {
+            APIService.resetTournament();
           }
         });
       }

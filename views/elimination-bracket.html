@@ -222,6 +222,8 @@
       box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
       transform: translateY(20px);
       transition: transform 0.3s;
+      max-height: 90vh;
+      overflow-y: auto;
     }
 
     .modal-overlay.active .modal-card {
@@ -395,7 +397,7 @@
           Haz clic en cualquier partido para registrar el resultado y avanzar al ganador.
         </p>
       </div>
-      <button class="btn-reset" id="btn-reset-tournament">Restablecer Fixture</button>
+
     </div>
 
     <!-- Contenedor del Bracket -->
@@ -515,11 +517,6 @@
       renderBracket();
 
       // Configurar eventos
-      document.getElementById('btn-reset-tournament').addEventListener('click', () => {
-        if (confirm('¿Estás seguro de que quieres restablecer todo el fixture a su estado original? Perderás todos los resultados cargados.')) {
-          APIService.resetTournament();
-        }
-      });
 
       document.getElementById('btn-close-modal').addEventListener('click', closeModal);
       document.getElementById('edit-match-form').addEventListener('submit', saveMatchResult);
