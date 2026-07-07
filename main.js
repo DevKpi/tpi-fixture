@@ -125,7 +125,7 @@ class AppController {
         const homeFlag = this.getTeamFlag(match.home_team_id);
         const awayFlag = this.getTeamFlag(match.away_team_id);
 
-        return `
+        return 
           <div class="result-item">
             <div class="result-team home">
               <img class="team-flag" src="${homeFlag}" alt="Bandera de ${homeTeam}">
