@@ -4,6 +4,7 @@
  */
 
 import APIService from '../services/apiService.js';
+import Tabla from '../models/Table.js';
 
 class GroupController {
   constructor() {
@@ -65,7 +66,7 @@ class GroupController {
   /**
    * Obtiene standings formateados de un grupo calculados DINÁMICAMENTE desde los partidos
    * @param {string} groupName - Letra del grupo (A-L)
-   * @returns {Object} Standings del grupo
+   * @returns {Array} Standings del grupo ordenados
    */
   getGroupStandings(groupName) {
     const group = this.getGroup(groupName);
@@ -74,101 +75,10 @@ class GroupController {
     const groupTeams = this.getTeamsByGroup(groupName);
     const groupMatches = this.getGroupMatches(groupName);
 
-    // Calcular estadísticas por equipo
-    const standingsMap = {};
-    groupTeams.forEach(team => {
-      standingsMap[String(team.id)] = {
-        teamId: String(team.id),
-        teamName: team.name_en,
-        played: 0,
-        wins: 0,
-        draws: 0,
-        losses: 0,
-        goalsFor: 0,
-        goalsAgainst: 0,
-        goalDifference: 0,
-        points: 0
-      };
-    });
-
-    groupMatches.forEach(match => {
-      const finished = match.finished === 'TRUE' || match.finished === true || match.finished === 'true';
-      if (!finished) return;
-
-      const homeId = String(match.home_team_id);
-      const awayId = String(match.away_team_id);
-      
-      const homeScore = parseInt(match.home_score) || 0;
-      const awayScore = parseInt(match.away_score) || 0;
-
-      // Asegurar que los equipos existan en el mapa incluso si teams.json no tiene la propiedad grupo
-      if (!standingsMap[homeId]) {
-        standingsMap[homeId] = {
-          teamId: homeId,
-          teamName: match.home_team_name_en,
-          played: 0, wins: 0, draws: 0, losses: 0, goalsFor: 0, goalsAgainst: 0, goalDifference: 0, points: 0
-        };
-      }
-      if (!standingsMap[awayId]) {
-        standingsMap[awayId] = {
-          teamId: awayId,
-          teamName: match.away_team_name_en,
-          played: 0, wins: 0, draws: 0, losses: 0, goalsFor: 0, goalsAgainst: 0, goalDifference: 0, points: 0
-        };
-      }
-
-      // Actualizar equipo local
-      if (standingsMap[homeId]) {
-        const stats = standingsMap[homeId];
-        stats.played++;
-        stats.goalsFor += homeScore;
-        stats.goalsAgainst += awayScore;
-        if (homeScore > awayScore) {
-          stats.wins++;
-          stats.points += 3;
-        } else if (homeScore === awayScore) {
-          stats.draws++;
-          stats.points += 1;
-        } else {
-          stats.losses++;
-        }
-      }
-
-      // Actualizar equipo visitante
-      if (standingsMap[awayId]) {
-        const stats = standingsMap[awayId];
-        stats.played++;
-        stats.goalsFor += awayScore;
-        stats.goalsAgainst += homeScore;
-        if (awayScore > homeScore) {
-          stats.wins++;
-          stats.points += 3;
-        } else if (homeScore === awayScore) {
-          stats.draws++;
-          stats.points += 1;
-        } else {
-          stats.losses++;
-        }
-      }
-    });
-
-    // Convertir a array y calcular diferencia de gol
-    const standingsList = Object.values(standingsMap).map(stats => {
-      stats.goalDifference = stats.goalsFor - stats.goalsAgainst;
-      return stats;
-    });
-
-    // Ordenar standings según criterio de FIFA:
-    // 1. Puntos
-    // 2. Diferencia de Gol
-    // 3. Goles a Favor
-    // 4. Enfrentamiento directo (simplificado aquí por orden alfabético para fallback estable)
-    standingsList.sort((a, b) => {
-      if (b.points !== a.points) return b.points - a.points;
-      if (b.goalDifference !== a.goalDifference) return b.goalDifference - a.goalDifference;
-      if (b.goalsFor !== a.goalsFor) return b.goalsFor - a.goalsFor;
-      return a.teamName.localeCompare(b.teamName);
-    });
+    const tabla = new Tabla(groupName);
+    tabla.Calcular(groupMatches);
+    
+    const standingsList = tabla.MostrarOrden(groupTeams);
 
     return {
       groupName,
