@@ -27,6 +27,9 @@ class MundialController {
         this.loadMatches(),
         this.loadStadiums()
       ]);
+      
+      this.mundial = new Mundial('World Cup 2026', 2026, [], this.groups, [], this.teams, this.matches, this.stadiums);
+      
       console.log('[MundialController] Datos cargados correctamente');
       return true;
     } catch (error) {
@@ -124,10 +127,8 @@ class MundialController {
    * @returns {Array} Partidos de esa fase
    */
   getMatchesByPhase(phase) {
-    if (phase === 'group') {
-      return this.matches.filter(m => typeof m.EsFaseDeGrupos === 'function' ? m.EsFaseDeGrupos() : false);
-    }
-    return this.matches.filter(m => m.type === phase);
+    if (!this.mundial) return [];
+    return this.mundial.ObtenerPartidosPorFase(phase);
   }
 
   /**
@@ -144,15 +145,8 @@ class MundialController {
    * @returns {Object} Próximo partido
    */
   getNextMatch() {
-    const upcoming = this.matches
-      .filter(m => m.finished === 'FALSE' || m.finished === false)
-      .sort((a, b) => {
-        const dateA = typeof a.ObtenerFechaObj === 'function' ? a.ObtenerFechaObj() : new Date();
-        const dateB = typeof b.ObtenerFechaObj === 'function' ? b.ObtenerFechaObj() : new Date();
-        return dateA - dateB;
-      });
-    
-    return upcoming.length > 0 ? upcoming[0] : null;
+    if (!this.mundial) return null;
+    return this.mundial.ObtenerSiguientePartido();
   }
 
   /**
@@ -161,14 +155,8 @@ class MundialController {
    * @returns {Array} Últimos partidos
    */
   getRecentMatches(limit = 5) {
-    return this.matches
-      .filter(m => m.finished === 'TRUE' || m.finished === true)
-      .sort((a, b) => {
-        const dateA = typeof a.ObtenerFechaObj === 'function' ? a.ObtenerFechaObj() : new Date();
-        const dateB = typeof b.ObtenerFechaObj === 'function' ? b.ObtenerFechaObj() : new Date();
-        return dateB - dateA;
-      })
-      .slice(0, limit);
+    if (!this.mundial) return [];
+    return this.mundial.ObtenerPartidosRecientes(limit);
   }
 
   /**
@@ -194,9 +182,8 @@ class MundialController {
    * @returns {Object} Estadísticas
    */
   calculateStats() {
-    // Para no sobrecargar el controlador, instanciamos el modelo y le delegamos el cálculo
-    const mundial = new Mundial('World Cup 2026', 2026, [], this.groups, [], this.teams);
-    this.stats = mundial.CalcularEstadisticasGlobales(this.matches, this.teams, this.groups, this.stadiums);
+    if (!this.mundial) return {};
+    this.stats = this.mundial.CalcularEstadisticasGlobales();
     return this.stats;
   }
 
@@ -205,28 +192,8 @@ class MundialController {
    * @returns {Array} Top scorers
    */
   getTopScorers() {
-    const scorers = {};
-
-    this.matches.forEach(match => {
-      if (match.home_scorers && match.home_scorers !== 'null' && match.home_scorers !== 'NULL') {
-        const goals = match.home_scorers.split(',').map(g => g.trim());
-        goals.forEach(goal => {
-          scorers[goal] = (scorers[goal] || 0) + 1;
-        });
-      }
-
-      if (match.away_scorers && match.away_scorers !== 'null' && match.away_scorers !== 'NULL') {
-        const goals = match.away_scorers.split(',').map(g => g.trim());
-        goals.forEach(goal => {
-          scorers[goal] = (scorers[goal] || 0) + 1;
-        });
-      }
-    });
-
-    return Object.entries(scorers)
-      .map(([player, goals]) => ({ player, goals }))
-      .sort((a, b) => b.goals - a.goals)
-      .slice(0, 10);
+    if (!this.mundial) return [];
+    return this.mundial.ObtenerGoleadores(10);
   }
 
   /**
@@ -235,16 +202,8 @@ class MundialController {
    * @returns {Object} Matches organizados
    */
   getFixture(filter = 'all') {
-    const groupMatches = this.getMatchesByPhase('group');
-    const knockoutMatches = this.getMatchesByPhase('r32');
-
-    if (filter === 'group') return groupMatches;
-    if (filter === 'knockout') return knockoutMatches;
-
-    return {
-      groupStage: groupMatches,
-      knockoutStage: knockoutMatches
-    };
+    if (!this.mundial) return null;
+    return this.mundial.ObtenerFixture(filter);
   }
 
   /**
