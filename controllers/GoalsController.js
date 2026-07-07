@@ -43,35 +43,16 @@ class GoalsController {
     const scorers = {};
 
     this.matches.forEach(match => {
-      // Goles del equipo local
-      if (match.home_scorers && match.home_scorers !== 'null' && match.home_scorers !== 'NULL' && match.home_scorers !== '') {
-        // Limpiar llaves y comillas antes de separar si es formato JSON string
-        const cleanedStr = match.home_scorers.replace(/[{}"“”]/g, '');
-        const goals = cleanedStr.split(',').map(g => g.trim());
-        goals.forEach(goal => {
-          if (goal) {
-            // Extraer el nombre del jugador quitando el minuto al final (ej: "J. Quiñones 9'" -> "J. Quiñones")
-            const playerName = goal.replace(/\s+\d+('|\+)?\d*'?$/, '').trim();
-            if (playerName) {
-              scorers[playerName] = (scorers[playerName] || 0) + 1;
-            }
-          }
-        });
-      }
+      const locales = match.ObtenerGoleadoresLocales();
+      const visitantes = match.ObtenerGoleadoresVisitantes();
 
-      // Goles del equipo visitante
-      if (match.away_scorers && match.away_scorers !== 'null' && match.away_scorers !== 'NULL' && match.away_scorers !== '') {
-        const cleanedStr = match.away_scorers.replace(/[{}"“”]/g, '');
-        const goals = cleanedStr.split(',').map(g => g.trim());
-        goals.forEach(goal => {
-          if (goal) {
-            const playerName = goal.replace(/\s+\d+('|\+)?\d*'?$/, '').trim();
-            if (playerName) {
-              scorers[playerName] = (scorers[playerName] || 0) + 1;
-            }
-          }
-        });
-      }
+      locales.forEach(playerName => {
+        scorers[playerName] = (scorers[playerName] || 0) + 1;
+      });
+
+      visitantes.forEach(playerName => {
+        scorers[playerName] = (scorers[playerName] || 0) + 1;
+      });
     });
 
     this.topScorers = Object.entries(scorers)
@@ -89,33 +70,16 @@ class GoalsController {
     const assists = {};
 
     this.matches.forEach(match => {
-      // Asistencias del equipo local
-      if (match.home_assists && match.home_assists !== 'null' && match.home_assists !== 'NULL' && match.home_assists !== '') {
-        const cleanedStr = match.home_assists.replace(/[{}"“”]/g, '');
-        const items = cleanedStr.split(',').map(a => a.trim());
-        items.forEach(assist => {
-          if (assist) {
-            const playerName = assist.replace(/\s+\d+('|\+)?\d*'?$/, '').trim();
-            if (playerName) {
-              assists[playerName] = (assists[playerName] || 0) + 1;
-            }
-          }
-        });
-      }
+      const locales = match.ObtenerAsistidoresLocales();
+      const visitantes = match.ObtenerAsistidoresVisitantes();
 
-      // Asistencias del equipo visitante
-      if (match.away_assists && match.away_assists !== 'null' && match.away_assists !== 'NULL' && match.away_assists !== '') {
-        const cleanedStr = match.away_assists.replace(/[{}"“”]/g, '');
-        const items = cleanedStr.split(',').map(a => a.trim());
-        items.forEach(assist => {
-          if (assist) {
-            const playerName = assist.replace(/\s+\d+('|\+)?\d*'?$/, '').trim();
-            if (playerName) {
-              assists[playerName] = (assists[playerName] || 0) + 1;
-            }
-          }
-        });
-      }
+      locales.forEach(playerName => {
+        assists[playerName] = (assists[playerName] || 0) + 1;
+      });
+
+      visitantes.forEach(playerName => {
+        assists[playerName] = (assists[playerName] || 0) + 1;
+      });
     });
 
     this.topAssists = Object.entries(assists)

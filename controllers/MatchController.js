@@ -37,56 +37,46 @@ class MatchController {
 
   /**
    * Obtiene el estado legible de un partido
-   * @param {Object} match - Objeto del partido
+   * @param {Object} match - Objeto del partido (instancia de Partido)
    * @returns {string} Estado del partido
    */
   getMatchStatus(match) {
     if (!match) return 'Desconocido';
-
-    const finished = match.finished === 'TRUE' || match.finished === true;
-    const timeElapsed = match.time_elapsed?.toLowerCase() || '';
-
-    if (finished) {
-      return 'Finalizado';
-    }
-
-    if (timeElapsed === 'notstarted') {
-      return 'Por comenzar';
-    }
-
-    if (timeElapsed.includes('\'')) {
-      return `En vivo - ${match.time_elapsed}'`;
-    }
-
-    return 'En vivo';
+    return typeof match.ObtenerEstadoLegible === 'function' 
+      ? match.ObtenerEstadoLegible() 
+      : 'En vivo';
   }
 
   /**
    * Determina si un partido es de grupos
-   * @param {Object} match
+   * @param {Object} match (instancia de Partido)
    * @returns {boolean}
    */
   isGroupMatch(match) {
-    return match && (match.type === 'group' || (match.grupo && match.grupo.match(/^[A-L]$/)));
+    if (!match) return false;
+    return typeof match.EsFaseDeGrupos === 'function' ? match.EsFaseDeGrupos() : false;
   }
 
   /**
    * Determina si un partido es de knockout
-   * @param {Object} match
+   * @param {Object} match (instancia de Partido)
    * @returns {boolean}
    */
   isKnockoutMatch(match) {
     if (!match) return false;
-    const knockoutTypes = ['r32', 'r16', 'qf', 'sf', 'third', 'final'];
-    return knockoutTypes.includes(match.type);
+    return typeof match.EsFaseEliminatoria === 'function' ? match.EsFaseEliminatoria() : false;
   }
 
   /**
    * Obtiene el nombre de la fase del torneo
    * @param {string} type - Tipo de fase
+   * @param {Object} match - Instancia opcional de Partido
    * @returns {string} Nombre legible de la fase
    */
-  getPhaseName(type) {
+  getPhaseName(type, match = null) {
+    if (match && typeof match.ObtenerNombreFase === 'function') {
+      return match.ObtenerNombreFase();
+    }
     const phases = {
       'group': 'Fase de Grupos',
       'r32': 'Ronda de 32',

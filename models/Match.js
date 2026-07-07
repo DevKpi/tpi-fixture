@@ -98,6 +98,68 @@ class Partido{
         return 0;
     }
 
+    ObtenerListaJugadoresLimpios(scorersString) {
+        if (!scorersString || scorersString === 'null' || scorersString === 'NULL' || scorersString === '') return [];
+        const cleanedStr = scorersString.replace(/[{}"“”]/g, '');
+        const items = cleanedStr.split(',').map(g => g.trim());
+        const jugadores = [];
+        items.forEach(item => {
+            if (item) {
+                const playerName = item.replace(/\s+\d+('|\+)?\d*'?$/, '').trim();
+                if (playerName) jugadores.push(playerName);
+            }
+        });
+        return jugadores;
+    }
+
+    ObtenerGoleadoresLocales() {
+        return this.ObtenerListaJugadoresLimpios(this.home_scorers);
+    }
+
+    ObtenerGoleadoresVisitantes() {
+        return this.ObtenerListaJugadoresLimpios(this.away_scorers);
+    }
+
+    ObtenerAsistidoresLocales() {
+        return this.ObtenerListaJugadoresLimpios(this.home_assists);
+    }
+
+    ObtenerAsistidoresVisitantes() {
+        return this.ObtenerListaJugadoresLimpios(this.away_assists);
+    }
+
+    ObtenerEstadoLegible() {
+        const finished = this.finished === 'TRUE' || this.finished === true;
+        const timeElapsed = this.time_elapsed?.toLowerCase() || '';
+
+        if (finished) return 'Finalizado';
+        if (timeElapsed === 'notstarted') return 'Por comenzar';
+        if (timeElapsed.includes('\'')) return `En vivo - ${this.time_elapsed}'`;
+        return 'En vivo';
+    }
+
+    EsFaseDeGrupos() {
+        return this.type === 'group' || (this.grupo && this.grupo.match(/^[A-L]$/));
+    }
+
+    EsFaseEliminatoria() {
+        const knockoutTypes = ['r32', 'r16', 'qf', 'sf', 'third', 'final'];
+        return knockoutTypes.includes(this.type);
+    }
+
+    ObtenerNombreFase() {
+        const phases = {
+            'group': 'Fase de Grupos',
+            'r32': 'Ronda de 32',
+            'r16': 'Octavos de Final',
+            'qf': 'Cuartos de Final',
+            'sf': 'Semifinal',
+            'third': 'Tercer Lugar',
+            'final': 'Final'
+        };
+        return phases[this.type] || this.type;
+    }
+
     IniciarPartido(){
         this.estado = 'PENDIENTE';
         this.finished = false;
