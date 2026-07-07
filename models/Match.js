@@ -1,3 +1,5 @@
+import Gol from './Goal.js';
+
 class Partido{
     constructor(id, seleccionLocal, seleccionVisitante, fechaHora, estadio, arbitro, golLocal, golVisitante, goles, estado, fase, grupo, rawMatch = {}){
         this.id = id;
@@ -100,16 +102,15 @@ class Partido{
 
     ObtenerListaJugadoresLimpios(scorersString) {
         if (!scorersString || scorersString === 'null' || scorersString === 'NULL' || scorersString === '') return [];
-        const cleanedStr = scorersString.replace(/[{}"“”]/g, '');
-        const items = cleanedStr.split(',').map(g => g.trim());
-        const jugadores = [];
+        const items = scorersString.split(',');
+        const goles = [];
         items.forEach(item => {
-            if (item) {
-                const playerName = item.replace(/\s+\d+('|\+)?\d*'?$/, '').trim();
-                if (playerName) jugadores.push(playerName);
+            if (item.trim()) {
+                const gol = Gol.ParsearDeString(item);
+                if (gol && gol.jugador) goles.push(gol);
             }
         });
-        return jugadores;
+        return goles;
     }
 
     ObtenerGoleadoresLocales() {
