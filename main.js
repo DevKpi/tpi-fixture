@@ -73,7 +73,7 @@ class AppController {
     const awayFlag = this.getTeamFlag(match.away_team_id);
     const dateTime = this.formatDateTime(APIService.getMatchDate(match));
 
-    container.innerHTML = `
+    container.innerHTML = 
       <div class="match-card">
         <div class="match-team home">
           <img class="team-flag" src="${homeFlag}" alt="Bandera de ${homeTeam}">
