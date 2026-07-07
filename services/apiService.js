@@ -6,6 +6,7 @@
 import Partido from '../models/Match.js';
 import Seleccion from '../models/CountryTeams.js';
 import Jugador from '../models/Player.js';
+import { parseApiDate } from '../utils/dateUtils.mjs';
 
 const API_BASE_URL = 'https://worldcup26.ir';
 
@@ -41,6 +42,8 @@ class APIService {
    * @returns {Date} Objeto Date absoluto
    */
   static getMatchDate(match) {
+    if (!match?.local_date) return null;
+
     const regionMap = {
       '14': 'Western', '8': 'Eastern', '13': 'Western', '15': 'Western',
       '3': 'Central', '1': 'Central', '2': 'Central', '5': 'Central',
@@ -55,9 +58,16 @@ class APIService {
     const stadiumId = match.stadium_id || match.estadio;
     const region = regionMap[stadiumId] || 'Eastern';
     const offset = timezoneOffsets[region];
-    // local_date is MM/DD/YYYY HH:mm
-    const isoString = match.local_date.replace(/(\d+)\/(\d+)\/(\d+) (\d+):(\d+)/, `$3-$1-$2T$4:$5${offset}`);
-    return new Date(isoString);
+    const value = String(match.local_date).trim();
+
+    const isoMatch = value.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})\s+(\d{1,2}):(\d{2})$/);
+    if (isoMatch) {
+      const [, month, day, year, hour, minute] = isoMatch;
+      const isoString = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}T${hour.padStart(2, '0')}:${minute}${offset}`;
+      return new Date(isoString);
+    }
+
+    return parseApiDate(value);
   }
 
   static async getAllMatches() {
@@ -350,10 +360,19 @@ class APIService {
       const matches = await this.getAllMatches();
       const now = new Date();
       const upcoming = matches
-        .filter(match => match.finished === 'FALSE' || match.finished === false || match.finished === 'false')
-        .filter(match => APIService.getMatchDate(match) > now)
-        .sort((a, b) => APIService.getMatchDate(a) - APIService.getMatchDate(b));
-      
+        .filter(match => {
+          const isPending = match.finished === 'FALSE' || match.finished === false || match.finished === 'false';
+          if (!isPending) return false;
+
+          const matchDate = APIService.getMatchDate(match);
+          return !!matchDate && matchDate.getTime() > now.getTime();
+        })
+        .sort((a, b) => {
+          const dateA = APIService.getMatchDate(a);
+          const dateB = APIService.getMatchDate(b);
+          return (dateA?.getTime() ?? Number.POSITIVE_INFINITY) - (dateB?.getTime() ?? Number.POSITIVE_INFINITY);
+        });
+
       return upcoming.length > 0 ? upcoming[0] : null;
     } catch (error) {
       console.error('Error fetching next match:', error);
@@ -371,8 +390,12 @@ class APIService {
       const matches = await this.getAllMatches();
       const finished = matches
         .filter(match => match.finished === 'TRUE' || match.finished === true || match.finished === 'true')
-        .sort((a, b) => APIService.getMatchDate(b) - APIService.getMatchDate(a));
-      
+        .sort((a, b) => {
+          const dateA = APIService.getMatchDate(a);
+          const dateB = APIService.getMatchDate(b);
+          return (dateB?.getTime() ?? Number.NEGATIVE_INFINITY) - (dateA?.getTime() ?? Number.NEGATIVE_INFINITY);
+        });
+
       return finished.slice(0, limit);
     } catch (error) {
       console.error('Error fetching recent matches:', error);

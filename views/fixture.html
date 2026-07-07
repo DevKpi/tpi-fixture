@@ -574,12 +574,24 @@
               const finished = m.finished === 'TRUE' || m.finished === true || m.finished === 'true';
               const scoreText = finished ? `${m.home_score} - ${m.away_score}` : 'vs';
               const dateObj = m.local_date.split(' ')[0]; // Solo fecha dd/mm/aaaa
+              const homeTeamName = m.home_team_name_en || m.home_team_label || 'Por confirmar';
+              const awayTeamName = m.away_team_name_en || m.away_team_label || 'Por confirmar';
+              const homeTeamInfo = groupController.teams.find(t => String(t.id) === String(m.home_team_id));
+              const awayTeamInfo = groupController.teams.find(t => String(t.id) === String(m.away_team_id));
+              const homeFlag = homeTeamInfo?.flag || 'https://flagcdn.com/w80/un.png';
+              const awayFlag = awayTeamInfo?.flag || 'https://flagcdn.com/w80/un.png';
               return `
                 <div class="match-row" data-match-id="${m.id}">
                   <div class="match-teams-flow">
-                    <span class="match-team home-t">${m.home_team_name_en}</span>
+                    <span class="match-team home-t">
+                      <img class="flag-icon" src="${homeFlag}" alt="Bandera de ${homeTeamName}">
+                      <span>${homeTeamName}</span>
+                    </span>
                     <span class="match-score-flow">${scoreText}</span>
-                    <span class="match-team away-t">${m.away_team_name_en}</span>
+                    <span class="match-team away-t">
+                      <span>${awayTeamName}</span>
+                      <img class="flag-icon" src="${awayFlag}" alt="Bandera de ${awayTeamName}">
+                    </span>
                   </div>
                   <span class="match-date-meta">${dateObj}</span>
                 </div>
