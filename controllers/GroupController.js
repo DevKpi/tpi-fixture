@@ -5,6 +5,7 @@
 
 import APIService from '../services/apiService.js';
 import Tabla from '../models/Table.js';
+import Grupo from '../models/Group.js';
 
 class GroupController {
   constructor() {
@@ -69,16 +70,14 @@ class GroupController {
    * @returns {Array} Standings del grupo ordenados
    */
   getGroupStandings(groupName) {
-    const group = this.getGroup(groupName);
-    if (!group) return null;
+    const groupData = this.getGroup(groupName);
+    if (!groupData) return null;
 
     const groupTeams = this.getTeamsByGroup(groupName);
     const groupMatches = this.getGroupMatches(groupName);
 
-    const tabla = new Tabla(groupName);
-    tabla.Calcular(groupMatches);
-    
-    const standingsList = tabla.MostrarOrden(groupTeams);
+    const grupo = new Grupo(groupName, groupName, groupTeams, groupMatches);
+    const standingsList = grupo.CalcularTabla();
 
     return {
       groupName,
@@ -113,10 +112,11 @@ class GroupController {
    * @returns {Array} Equipos clasificados (los primeros 2)
    */
   getQualifiedTeams(groupName) {
-    const standings = this.getGroupStandings(groupName);
-    if (!standings) return [];
+    const groupTeams = this.getTeamsByGroup(groupName);
+    const groupMatches = this.getGroupMatches(groupName);
 
-    return standings.standings.slice(0, 2);
+    const grupo = new Grupo(groupName, groupName, groupTeams, groupMatches);
+    return grupo.ObtenerClasificados().clasificados;
   }
 
   /**
@@ -152,9 +152,9 @@ class GroupController {
    * @returns {boolean}
    */
   isGroupComplete(groupName) {
-    const matches = this.getGroupMatches(groupName);
-    const finishedMatches = matches.filter(m => m.finished === 'TRUE' || m.finished === true || m.finished === 'true').length;
-    return finishedMatches === matches.length && matches.length > 0;
+    const groupMatches = this.getGroupMatches(groupName);
+    const grupo = new Grupo(groupName, groupName, [], groupMatches);
+    return grupo.EstaCompleto();
   }
 
   /**
@@ -163,13 +163,16 @@ class GroupController {
    * @returns {Object}
    */
   getGroupClassification(groupName) {
-    const standings = this.getGroupStandings(groupName);
-    if (!standings) return null;
+    const groupTeams = this.getTeamsByGroup(groupName);
+    const groupMatches = this.getGroupMatches(groupName);
 
+    const grupo = new Grupo(groupName, groupName, groupTeams, groupMatches);
+    const clasificacion = grupo.ObtenerClasificados();
+    
     return {
       groupName,
-      qualified: standings.standings.slice(0, 2),
-      eliminated: standings.standings.slice(2)
+      qualified: clasificacion.clasificados,
+      eliminated: clasificacion.eliminados
     };
   }
 }
