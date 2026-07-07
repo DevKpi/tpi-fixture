@@ -85,13 +85,19 @@ tpi-fixture/
 ├── services/
 │   └── apiService.js
 ├── views/  
+│   ├── js/
+│   │   ├── elimination-bracket.js
+│   │   ├── fixture.js
+│   │   ├── login.js
+│   │   ├── match-detail.js
+│   │   └── tops.js
+│   ├── styles/
+│   │   └── styles.css
 │   ├── elimination-bracket.html
 │   ├── fixture.html
 │   ├── login.html
 │   ├── match-detail.html
-│   ├── tops.html
-│   └── styles/
-│       └── styles.css
+│   └── tops.html
 ├── index.html
 ├── main.js
 └── README.md
@@ -101,35 +107,31 @@ tpi-fixture/
 
 ## 📊 Entidades implementadas
 
-| Clase | Responsabilidad |
-|---|---|
-| **Mundial** | Coordinador general, integra Fase 1 y Fase 2 |
-| **Eliminatorias** | Motor del árbol de playoff; genera y conecta llaves |
-| **LlaveEliminatoria** | Enfrentamiento de una ronda; propaga ganador automáticamente |
-| **Grupo** | 4 selecciones + 6 partidos (round-robin) |
-| **Selección** | Equipo con plantilla de 23 jugadores |
-| **Jugador** | Goles, asistencias, tarjetas, posición |
-| **Partido** | Resultado, goles, estado (PENDIENTE / FINALIZADO) |
-| **Gol** | Minuto, tipo (NORMAL / PENAL / AUTOGOL), asistencia |
-| **Fase** | Agrupa partidos de una ronda |
-| **Tabla / RegistroTabla** | Cálculo de puntos y standings del grupo |
+| Clase | Archivo | Responsabilidad (Fat Models) |
+|---|---|---|
+| **Mundial** | `models/Mundial.js` | Coordinador general. Calcula estadísticas globales, clasifica partidos por fases y retorna goleadores. |
+| **Eliminatoria** | `models/KnockOutStage.js` | Representa un cruce de eliminatorias; extrae goles y determina automáticamente al ganador (incluyendo posibles penales). |
+| **Fase** | `models/Fase.js` | Modela una ronda completa (ej: Fase de Grupos, Cuartos); gestiona colecciones de partidos y rastrea pendientes/finalizados. |
+| **Grupo** | `models/Group.js` | Modela la fase de grupos; procesa los partidos del grupo delegando en `Tabla` para obtener a los clasificados. |
+| **Tabla / RegistroTabla** | `models/Table.js` & `TableRegister.js` | Motor matemático. Procesa iterativamente listas de partidos para acumular puntos, DG, GF, GC y devolver posiciones ordenadas. |
+| **Partido** | `models/Match.js` | Parsea e interpreta datos en crudo (incluyendo fechas). Calcula estado (finalizado, en vivo) y provee resúmenes específicos. |
+| **Gol** | `models/Goal.js` | Entidad que extrae de strings sucios de la API al jugador anotador, su minuto y asistencia; provee su propia descripción. |
+| **Jugador** | `models/Player.js` | Modela la entidad jugador con estadísticas base (goles, asistencias, tarjetas) e inteligencia para acumular méritos. |
+| **Usuario** | `models/User.js` | Maneja la lógica de autenticación simulada (LogIn/LogOut) y cálculo de porcentajes de aciertos (progreso/nivel). |
+| **Equipos** | `models/CountryTeams.js` | Diccionario de selecciones que incluye mapeo inteligente de formaciones y arqueros titulares. |
 
 ---
 
-
-## Conceptos aplicados
+## 🧠 Arquitectura y Conceptos Aplicados
 
 | Concepto | Implementación |
 |---|---|
-| **Clases y objetos** | 12 clases en `/modelos` |
-| **Encapsulación** | `Tabla`, `Eliminatorias` ocultan lógica interna |
-| **Polimorfismo** | `Gol.tipo` cambia el efecto en el marcador |
-| **UML** | `docs/diagrama-clases.md` + `diagrama-secuencia.md` |
-| **MVC** | `modelos/` → `controladores/` → `vistas/` |
-| **Modularización** | Cada clase en su propio ES Module |
-| **Persistencia** | `localStorage` vía controladores |
-| **APIs** | `servicios/apiService.js` con fallback local |
-| **Git** | Historial de commits del equipo |
+| **MVC Refactorizado** | Implementación estricta de **"Thin Controllers, Fat Models"**. Toda la lógica de negocio (parseo, contabilidad de puntos, llaves) vive en `models/`. Los archivos de `controllers/` solo orquestan datos y se comunican con el almacenamiento. |
+| **Clases y objetos** | Modelos nativos ES6+ con métodos estáticos y constructores semánticos (`Gol.ParsearDeString`, `Eliminatoria`). |
+| **Persistencia** | `localStorage` con caché inteligente implementado en `services/apiService.js` (cache buster). |
+| **Delegación** | Principio SRP: `Grupo` no calcula posiciones matemáticas, sino que delega el array a la clase `Tabla`. |
+| **Modularización** | Importación/Exportación nativa entre clases. Estructura ordenada en `/models`, `/controllers`, `/services`. |
+| **Git** | Historial de refactorización paulatina hacia un paradigma puramente Orientado a Objetos. |
 
 ---
 
