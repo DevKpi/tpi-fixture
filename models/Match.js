@@ -199,6 +199,13 @@ class Partido{
         return oppositeScore === 0;
     }
 
+    ObtenerFechaObj() {
+        if (!this.local_date) return new Date();
+        // Formato dd/mm/yyyy hh:mm a mm-dd-yyyyThh:mm
+        const parsableDate = this.local_date.replace(/(\d+)\/(\d+)\/(\d+) (\d+):(\d+)/, '$3-$1-$2T$4:$5');
+        return new Date(parsableDate);
+    }
+
     IniciarPartido(){
         this.estado = 'PENDIENTE';
         this.finished = false;

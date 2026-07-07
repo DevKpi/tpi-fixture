@@ -4,6 +4,7 @@
  */
 
 import APIService from '../services/apiService.js';
+import Mundial from '../models/Mundial.js';
 
 class MundialController {
   constructor() {
@@ -124,7 +125,7 @@ class MundialController {
    */
   getMatchesByPhase(phase) {
     if (phase === 'group') {
-      return this.matches.filter(m => m.type === 'group' || (m.grupo && m.grupo.match(/^[A-L]$/)));
+      return this.matches.filter(m => typeof m.EsFaseDeGrupos === 'function' ? m.EsFaseDeGrupos() : false);
     }
     return this.matches.filter(m => m.type === phase);
   }
@@ -146,8 +147,8 @@ class MundialController {
     const upcoming = this.matches
       .filter(m => m.finished === 'FALSE' || m.finished === false)
       .sort((a, b) => {
-        const dateA = new Date(a.local_date.replace(/(\d+)\/(\d+)\/(\d+) (\d+):(\d+)/, '$3-$1-$2T$4:$5'));
-        const dateB = new Date(b.local_date.replace(/(\d+)\/(\d+)\/(\d+) (\d+):(\d+)/, '$3-$1-$2T$4:$5'));
+        const dateA = typeof a.ObtenerFechaObj === 'function' ? a.ObtenerFechaObj() : new Date();
+        const dateB = typeof b.ObtenerFechaObj === 'function' ? b.ObtenerFechaObj() : new Date();
         return dateA - dateB;
       });
     
@@ -163,8 +164,8 @@ class MundialController {
     return this.matches
       .filter(m => m.finished === 'TRUE' || m.finished === true)
       .sort((a, b) => {
-        const dateA = new Date(a.local_date.replace(/(\d+)\/(\d+)\/(\d+) (\d+):(\d+)/, '$3-$1-$2T$4:$5'));
-        const dateB = new Date(b.local_date.replace(/(\d+)\/(\d+)\/(\d+) (\d+):(\d+)/, '$3-$1-$2T$4:$5'));
+        const dateA = typeof a.ObtenerFechaObj === 'function' ? a.ObtenerFechaObj() : new Date();
+        const dateB = typeof b.ObtenerFechaObj === 'function' ? b.ObtenerFechaObj() : new Date();
         return dateB - dateA;
       })
       .slice(0, limit);
@@ -193,28 +194,9 @@ class MundialController {
    * @returns {Object} Estadísticas
    */
   calculateStats() {
-    const totalMatches = this.matches.length;
-    const playedMatches = this.matches.filter(m => m.finished === 'TRUE' || m.finished === true).length;
-    const upcomingMatches = totalMatches - playedMatches;
-
-    const totalGoals = this.matches.reduce((sum, match) => {
-      const homeGoals = parseInt(match.home_score) || 0;
-      const awayGoals = parseInt(match.away_score) || 0;
-      return sum + homeGoals + awayGoals;
-    }, 0);
-
-    this.stats = {
-      totalMatches,
-      playedMatches,
-      upcomingMatches,
-      progressPercent: Math.round((playedMatches / totalMatches) * 100),
-      totalGoals,
-      averageGoalsPerMatch: totalMatches > 0 ? (totalGoals / totalMatches).toFixed(2) : 0,
-      totalTeams: this.teams.length,
-      totalGroups: this.groups.length,
-      totalStadiums: this.stadiums.length
-    };
-
+    // Para no sobrecargar el controlador, instanciamos el modelo y le delegamos el cálculo
+    const mundial = new Mundial('World Cup 2026', 2026, [], this.groups, [], this.teams);
+    this.stats = mundial.CalcularEstadisticasGlobales(this.matches, this.teams, this.groups, this.stadiums);
     return this.stats;
   }
 
