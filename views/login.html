@@ -141,9 +141,10 @@
 
   <script type="module">
     import APIService from '../services/apiService.js';
+    import Usuario from '../models/User.js';
     
     document.addEventListener('DOMContentLoaded', () => {
-      const currentUser = localStorage.getItem('worldcup2026_user');
+      const currentUser = Usuario.ObtenerUsuarioActual();
       const loginForm = document.getElementById('login-form');
       const statusDiv = document.getElementById('logged-user-status');
       const usernameSpan = document.getElementById('logged-username');
@@ -153,15 +154,13 @@
       if (currentUser) {
         loginForm.style.display = 'none';
         statusDiv.style.display = 'block';
-        usernameSpan.textContent = currentUser;
+        usernameSpan.textContent = currentUser.id;
 
         APIService.getAllMatches().then(matches => {
-          const totalMatches = 104;
-          const finishedMatches = matches.filter(m => m.finished === 'TRUE' || m.finished === true || m.finished === 'true').length;
-          const percentage = Math.round((finishedMatches / totalMatches) * 100);
+          const stats = currentUser.AnotarResultados(matches);
           
-          document.getElementById('progress-bar').style.width = percentage + '%';
-          document.getElementById('progress-text').textContent = `Has completado ${finishedMatches} de ${totalMatches} partidos (${percentage}%)`;
+          document.getElementById('progress-bar').style.width = stats.percentage + '%';
+          document.getElementById('progress-text').textContent = `Has completado ${stats.finishedMatches} de ${stats.totalMatches} partidos (${stats.percentage}%)`;
         }).catch(err => {
           console.error("Error al cargar progreso:", err);
           document.getElementById('progress-text').textContent = "Error al cargar progreso.";
@@ -171,8 +170,7 @@
       loginForm.addEventListener('submit', (e) => {
         e.preventDefault();
         const username = document.getElementById('username').value.trim();
-        if (username) {
-          localStorage.setItem('worldcup2026_user', username);
+        if (Usuario.LogIn(username)) {
           alert(`¡Bienvenido, ${username}! Tus cambios y predicciones ahora se guardarán.`);
           window.location.href = '../index.html';
         }
@@ -180,7 +178,7 @@
 
       logoutBtn.addEventListener('click', (e) => {
         e.preventDefault();
-        localStorage.removeItem('worldcup2026_user');
+        Usuario.LogOut();
         alert('Sesión cerrada.');
         window.location.reload();
       });
