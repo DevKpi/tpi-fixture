@@ -85,13 +85,19 @@ tpi-fixture/
 ├── services/
 │   └── apiService.js
 ├── views/  
+│   ├── js/
+│   │   ├── elimination-bracket.js
+│   │   ├── fixture.js
+│   │   ├── login.js
+│   │   ├── match-detail.js
+│   │   └── tops.js
+│   ├── styles/
+│   │   └── styles.css
 │   ├── elimination-bracket.html
 │   ├── fixture.html
 │   ├── login.html
 │   ├── match-detail.html
-│   ├── tops.html
-│   └── styles/
-│       └── styles.css
+│   └── tops.html
 ├── index.html
 ├── main.js
 └── README.md
