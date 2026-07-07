@@ -160,6 +160,45 @@ class Partido{
         return phases[this.type] || this.type;
     }
 
+    EsParticipante(teamId) {
+        return (this.home_team_id === String(teamId) || this.home_team_id === teamId) ||
+               (this.away_team_id === String(teamId) || this.away_team_id === teamId);
+    }
+
+    ObtenerResumenParaEquipo(teamId) {
+        if (!this.EsParticipante(teamId)) return null;
+
+        const isHome = String(this.home_team_id) === String(teamId);
+        const teamScore = isHome ? parseInt(this.home_score) || 0 : parseInt(this.away_score) || 0;
+        const oppositeScore = isHome ? parseInt(this.away_score) || 0 : parseInt(this.home_score) || 0;
+        const opponent = isHome ? this.away_team_name_en : this.home_team_name_en;
+
+        const result = teamScore > oppositeScore ? 'ganó' : (teamScore === oppositeScore ? 'empató' : 'perdió');
+        const finished = this.finished === 'TRUE' || this.finished === true;
+
+        return {
+            phase: this.type,
+            phaseName: this.ObtenerNombreFase(),
+            matchId: this.id,
+            opponent,
+            teamScore,
+            oppositeScore,
+            result,
+            finished
+        };
+    }
+
+    ObtuvoVallaInvicta(teamId) {
+        if (!this.EsParticipante(teamId)) return false;
+        const finished = this.finished === 'TRUE' || this.finished === true;
+        if (!finished) return false;
+
+        const isHome = String(this.home_team_id) === String(teamId);
+        const oppositeScore = isHome ? parseInt(this.away_score) || 0 : parseInt(this.home_score) || 0;
+        
+        return oppositeScore === 0;
+    }
+
     IniciarPartido(){
         this.estado = 'PENDIENTE';
         this.finished = false;

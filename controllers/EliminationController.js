@@ -48,15 +48,10 @@ class EliminationController {
    * @returns {string}
    */
   getPhaseName(phase) {
-    const names = {
-      'r32': 'Ronda de 32',
-      'r16': 'Octavos de Final',
-      'qf': 'Cuartos de Final',
-      'sf': 'Semifinal',
-      'third': 'Tercer Lugar',
-      'final': 'Final'
-    };
-    return names[phase] || phase;
+    const tempMatch = this.knockoutMatches.find(m => m.type === phase);
+    return tempMatch && typeof tempMatch.ObtenerNombreFase === 'function'
+      ? tempMatch.ObtenerNombreFase()
+      : phase;
   }
 
   /**
@@ -100,10 +95,7 @@ class EliminationController {
    */
   isTeamInPhase(teamId, phase) {
     const matches = this.getMatchesByPhase(phase);
-    return matches.some(m =>
-      (m.home_team_id === String(teamId) || m.home_team_id === teamId) ||
-      (m.away_team_id === String(teamId) || m.away_team_id === teamId)
-    );
+    return matches.some(m => typeof m.EsParticipante === 'function' ? m.EsParticipante(teamId) : false);
   }
 
   /**
@@ -117,27 +109,10 @@ class EliminationController {
 
     phases.forEach(phase => {
       const phaseMatches = this.getMatchesByPhase(phase);
-      const teamMatch = phaseMatches.find(m =>
-        (m.home_team_id === String(teamId) || m.home_team_id === teamId) ||
-        (m.away_team_id === String(teamId) || m.away_team_id === teamId)
-      );
+      const teamMatch = phaseMatches.find(m => typeof m.EsParticipante === 'function' ? m.EsParticipante(teamId) : false);
 
-      if (teamMatch) {
-        const isHome = String(teamMatch.home_team_id) === String(teamId);
-        const teamScore = isHome ? parseInt(teamMatch.home_score) : parseInt(teamMatch.away_score);
-        const oppositeScore = isHome ? parseInt(teamMatch.away_score) : parseInt(teamMatch.home_score);
-        const opponent = isHome ? teamMatch.away_team_name_en : teamMatch.home_team_name_en;
-
-        path.push({
-          phase,
-          phaseName: this.getPhaseName(phase),
-          matchId: teamMatch.id,
-          opponent,
-          teamScore: teamScore || 0,
-          oppositeScore: oppositeScore || 0,
-          result: teamScore > oppositeScore ? 'ganó' : (teamScore === oppositeScore ? 'empató' : 'perdió'),
-          finished: teamMatch.finished === 'TRUE' || teamMatch.finished === true
-        });
+      if (teamMatch && typeof teamMatch.ObtenerResumenParaEquipo === 'function') {
+        path.push(teamMatch.ObtenerResumenParaEquipo(teamId));
       }
     });
 

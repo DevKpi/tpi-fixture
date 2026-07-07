@@ -42,6 +42,39 @@ class Seleccion{
             plantillaCount: this.jugadores.length
         };
     }
+
+    ObtenerArqueroTitular(){
+        // Intentar buscar al jugador con rol de Goalkeeper
+        const arquero = this.jugadores.find(j => j.posicion && (j.posicion.toLowerCase().includes('goalkeeper') || j.posicion.toLowerCase().includes('arquero') || j.posicion.toLowerCase().includes('portero')));
+        if (arquero && arquero.nombre) return arquero.nombre;
+
+        // Fallback al diccionario hardcodeado si la plantilla está vacía
+        const goalies = {
+            'Argentina': 'E. Martínez',
+            'Mexico': 'L. Malagón',
+            'Germany': 'M. ter Stegen',
+            'Brazil': 'Alisson',
+            'France': 'M. Maignan',
+            'Spain': 'Unai Simón',
+            'England': 'J. Pickford',
+            'United States': 'M. Turner',
+            'Canada': 'M. Crépeau',
+            'Netherlands': 'B. Verbruggen',
+            'Morocco': 'Y. Bounou',
+            'Portugal': 'Diogo Costa',
+            'Belgium': 'K. Casteels',
+            'Uruguay': 'S. Rochet',
+            'Colombia': 'C. Vargas',
+            'Italy': 'G. Donnarumma',
+            'Croatia': 'D. Livaković',
+            'South Africa': 'R. Williams',
+            'Japan': 'Z. Suzuki',
+            'Ecuador': 'A. Domínguez',
+            'Switzerland': 'Y. Sommer',
+            'Paraguay': 'R. Fernández'
+        };
+        return goalies[this.name_en] || goalies[this.nombre] || `Golero de ${this.name_en || this.nombre}`;
+    }
 }
 
 export default Seleccion;
