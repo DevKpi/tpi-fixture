@@ -84,19 +84,42 @@ class GoalsController {
 
   /**
    * Calcula las principales asistencias
-   * (Nota: La API actual no proporciona datos de asistencias, 
-   * este método está preparado para cuando esté disponible)
    */
   calculateTopAssists() {
     const assists = {};
 
     this.matches.forEach(match => {
-      // Esta es una estructura preparada para cuando la API proporcione datos de asistencias
-      // Por ahora no hay datos de asistencias disponibles en la API
+      // Asistencias del equipo local
+      if (match.home_assists && match.home_assists !== 'null' && match.home_assists !== 'NULL' && match.home_assists !== '') {
+        const cleanedStr = match.home_assists.replace(/[{}"“”]/g, '');
+        const items = cleanedStr.split(',').map(a => a.trim());
+        items.forEach(assist => {
+          if (assist) {
+            const playerName = assist.replace(/\s+\d+('|\+)?\d*'?$/, '').trim();
+            if (playerName) {
+              assists[playerName] = (assists[playerName] || 0) + 1;
+            }
+          }
+        });
+      }
+
+      // Asistencias del equipo visitante
+      if (match.away_assists && match.away_assists !== 'null' && match.away_assists !== 'NULL' && match.away_assists !== '') {
+        const cleanedStr = match.away_assists.replace(/[{}"“”]/g, '');
+        const items = cleanedStr.split(',').map(a => a.trim());
+        items.forEach(assist => {
+          if (assist) {
+            const playerName = assist.replace(/\s+\d+('|\+)?\d*'?$/, '').trim();
+            if (playerName) {
+              assists[playerName] = (assists[playerName] || 0) + 1;
+            }
+          }
+        });
+      }
     });
 
     this.topAssists = Object.entries(assists)
-      .map(([player, assists]) => ({ player, assists }))
+      .map(([player, count]) => ({ player, assists: count }))
       .sort((a, b) => b.assists - a.assists);
 
     return this.topAssists;

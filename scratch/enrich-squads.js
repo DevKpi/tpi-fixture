@@ -1,10 +1,7 @@
-import https from 'https';
-import fs from 'fs';
-import path from 'path';
+const fs = require('fs');
 
-// Jugadores actualizados para 2026
 const realSquads = {
-  "Argentina": ["E. Martínez", "G. Rulli", "J. Musso", "G. Montiel", "N. Molina", "L. Martínez", "N. Otamendi", "L. Balerdi", "C. Romero", "F. Medina", "N. Tagliafico", "L. Paredes", "R. De Paul", "E. Palacios", "E. Fernández", "A. Mac Allister", "G. Lo Celso", "V. Barco", "L. Messi", "N. Paz", "T. Almada", "N. González", "G. Simeone", "Lautaro Martínez", "J.M. López", "J. Álvarez"],
+  "Argentina": ["E. Martínez", "G. Rulli", "N. Molina", "C. Romero", "N. Otamendi", "L. Martínez", "N. Tagliafico", "R. De Paul", "A. Mac Allister", "E. Fernández", "G. Lo Celso", "L. Paredes", "L. Messi", "A. Di María", "J. Álvarez", "L. Martínez", "N. González", "A. Garnacho"],
   "Brazil": ["Alisson", "Ederson", "Danilo", "Marquinhos", "G. Magalhães", "Éder Militão", "Beraldo", "Casemiro", "B. Guimarães", "L. Paquetá", "D. Luiz", "Vini Jr.", "Rodrygo", "Raphinha", "Endrick", "Gabriel Martinelli", "Richarlison"],
   "France": ["M. Maignan", "A. Areola", "T. Hernández", "D. Upamecano", "I. Konaté", "W. Saliba", "J. Koundé", "A. Tchouaméni", "E. Camavinga", "N. Kanté", "A. Rabiot", "K. Mbappé", "A. Griezmann", "O. Dembélé", "M. Thuram", "R. Kolo Muani", "B. Barcola"],
   "England": ["J. Pickford", "A. Ramsdale", "K. Walker", "J. Stones", "H. Maguire", "L. Shaw", "T. Alexander-Arnold", "D. Rice", "J. Bellingham", "P. Foden", "B. Saka", "C. Palmer", "H. Kane", "O. Watkins", "I. Toney", "J. Grealish"],
@@ -34,10 +31,27 @@ const realSquads = {
   "Saudi Arabia": ["M. Al-Owais", "H. Tambakti", "A. Al-Bulaihi", "S. Abdulhamid", "M. Kanno", "S. Al-Dawsari", "F. Al-Buraikan", "S. Al-Shehri"],
   "Iran": ["A. Beiranvand", "S. Khalilzadeh", "M. Pouraliganji", "E. Hajsafi", "S. Ezatolahi", "A. Jahanbakhsh", "M. Taremi", "S. Azmoun"],
   "Australia": ["M. Ryan", "H. Souttar", "K. Rowles", "A. Behich", "J. Irvine", "C. Metcalfe", "M. Boyle", "C. Goodwin", "M. Duke"],
-  "Canada": ["M. Crépeau", "A. Davies", "A. Johnston", "K. Miller", "S. Eustáquio", "I. Koné", "T. Buchanan", "J. David", "C. Larin"]
+  "Canada": ["M. Crépeau", "A. Davies", "A. Johnston", "K. Miller", "S. Eustáquio", "I. Koné", "T. Buchanan", "J. David", "C. Larin"],
+  "Serbia": ["P. Rajkovic", "N. Milenkovic", "S. Pavlovic", "S. Milinkovic-Savic", "D. Tadic", "A. Mitrovic", "D. Vlahovic", "F. Kostic"], // Si aplica
+  "Scotland": ["A. Gunn", "K. Tierney", "A. Robertson", "S. McTominay", "J. McGinn", "C. McGregor", "C. Adams", "L. Shankland"],
+  "Czech Republic": ["J. Stanek", "T. Soucek", "V. Coufal", "A. Barak", "P. Schick", "A. Hlozek", "J. Kuchta"],
+  "Norway": ["Ö. Nyland", "K. Ajer", "L. Östigard", "M. Ödegaard", "S. Berge", "E. Haaland", "A. Sörloth", "O. Bobb"],
+  "Sweden": ["R. Olsen", "V. Lindelöf", "I. Hien", "D. Kulusevski", "A. Isak", "V. Gyökeres", "E. Forsberg"],
+  "Uzbekistan": ["U. Yusupov", "A. Khusanov", "O. Shukurov", "J. Masharipov", "E. Shomurodov", "A. Fayzullaev"],
+  "Iraq": ["J. Hasan", "A. Adnan", "S. Tariq", "A. Attwan", "Z. Iqbal", "A. Hussein", "M. Ali"],
+  "Qatar": ["M. Barsham", "B. Al-Rawi", "T. Salman", "H. Al-Haydos", "A. Afif", "A. Ali"],
+  "Tunisia": ["A. Dahmen", "M. Talbi", "E. Skhiri", "A. Laidouni", "Y. Msakni", "S. Jaziri"],
+  "Cape Verde": ["Vozinha", "Logan Costa", "Kevin Pina", "Jamiro Monteiro", "Ryan Mendes", "Bebé"],
+  "Paraguay": ["C. Coronel", "G. Gómez", "J. Alonso", "M. Almirón", "J. Enciso", "A. Sanabria", "R. Sosa"],
+  "Panama": ["O. Mosquera", "F. Escobar", "A. Carrasquilla", "E. Bárcenas", "J. Fajardo", "I. Díaz"],
+  "Bosnia and Herzegovina": ["I. Sehic", "A. Ahmedhodzic", "S. Kolasinac", "M. Pjanic", "R. Krunic", "E. Dzeko"],
+  "New Zealand": ["M. Crocombe", "L. Cacace", "M. Boxall", "M. Garbett", "S. Singh", "C. Wood"],
+  "Curaçao": ["E. Room", "J. Gaari", "C. Martina", "L. Bacuna", "J. Bacuna", "R. Janga"],
+  "DR Congo": ["L. Mpasi", "C. Mbemba", "A. Masuaku", "S. Moutoussamy", "Y. Wissa", "C. Bakambu"],
+  "Jordan": ["Y. Abu Laila", "Y. Al-Arab", "N. Al-Rashdan", "M. Al-Taamari", "A. Olwan", "Y. Al-Naimat"]
 };
 
-// Fallback para rellenar hasta 23 jugadores
+// Fallback generator for teams not in realSquads or to fill up to 23 players
 function fillSquad(teamName, fifaCode, currentSquad) {
   const squad = [...currentSquad];
   const total = squad.length;
@@ -47,84 +61,50 @@ function fillSquad(teamName, fifaCode, currentSquad) {
   return squad;
 }
 
-const coaches = {
-  'Argentina': 'Lionel Scaloni',
-  'France': 'Didier Deschamps',
-  'Brazil': 'Dorival Júnior',
-  'Spain': 'Luis de la Fuente',
-  'Germany': 'Julian Nagelsmann',
-  'England': 'Thomas Tuchel',
-  'Portugal': 'Roberto Martínez',
-  'Italy': 'Luciano Spalletti',
-  'Uruguay': 'Marcelo Bielsa',
-  'Colombia': 'Néstor Lorenzo',
-  'Mexico': 'Javier Aguirre',
-  'United States': 'Mauricio Pochettino',
-  'Canada': 'Jesse Marsch'
-};
+try {
+  const jsonPath = 'C:\\Users\\thiag\\Desktop\\Webs\\ISFT 118\\tpi-fixture\\data\\teams.json';
+  const data = fs.readFileSync(jsonPath, 'utf8');
+  const teams = JSON.parse(data);
 
-https.get('https://worldcup26.ir/get/teams', (res) => {
-  let data = '';
-  res.on('data', (chunk) => {
-    data += chunk;
-  });
-  res.on('end', () => {
-    try {
-      const parsed = JSON.parse(data);
-      const apiTeams = parsed.teams || [];
+  const updatedTeams = teams.map(team => {
+    const tName = team.nombre || team.name_en;
+    const fCode = team.codigo || team.fifa_code;
+    
+    // Get real players or empty array
+    const realPlayers = realSquads[tName] || realSquads[team.name_en] || [];
+    const fullNames = fillSquad(tName, fCode, realPlayers);
+
+    // Create full object array for plantilla
+    const newPlantilla = fullNames.map((name, idx) => {
+      let pos = 'Defensa';
+      if (idx === 0 || idx === 1) pos = 'Portero';
+      else if (idx < 7) pos = 'Defensa';
+      else if (idx < 15) pos = 'Mediocampista';
+      else pos = 'Delantero';
       
-      if (apiTeams.length === 0) {
-        console.error('No teams found in API');
-        return;
-      }
+      // Attempt to guess position from real player lists (simplified)
+      if (name.includes('Martínez') && idx===0) pos = 'Portero';
 
-      const finalTeamsList = apiTeams.map(team => {
-        const name = team.name_en;
-        const coach = coaches[name] || `DT de ${name}`;
-        
-        const realPlayers = realSquads[name] || [];
-        const fullNames = fillSquad(name, team.fifa_code, realPlayers);
-        
-        const newPlantilla = fullNames.map((pName, idx) => {
-          let pos = 'Defensa';
-          if (idx === 0 || idx === 1) pos = 'Portero';
-          else if (idx < 7) pos = 'Defensa';
-          else if (idx < 15) pos = 'Mediocampista';
-          else pos = 'Delantero';
-          
-          if (pName.includes('Martínez') && idx===0) pos = 'Portero';
+      return {
+        id: `${team.id}-${idx + 1}`,
+        nombreCompleto: name,
+        numero: idx + 1,
+        posicion: pos,
+        seleccion: tName,
+        goles: 0,
+        asistencias: 0,
+        amarillas: 0,
+        rojas: 0,
+        edad: Math.floor(Math.random() * 12) + 20
+      };
+    });
 
-          return {
-            id: `${team.id}-${idx + 1}`,
-            nombreCompleto: pName,
-            numero: idx + 1,
-            posicion: pos,
-            seleccion: name,
-            goles: 0,
-            asistencias: 0,
-            amarillas: 0,
-            rojas: 0,
-            edad: Math.floor(Math.random() * 12) + 20
-          };
-        });
-
-        return {
-          id: String(team.id),
-          nombre: name,
-          codigo: team.fifa_code,
-          bandera: team.flag,
-          entrenador: coach,
-          plantilla: newPlantilla
-        };
-      });
-
-      const destPath = path.resolve('..', 'data', 'teams.json');
-      fs.writeFileSync(destPath, JSON.stringify(finalTeamsList, null, 2));
-      console.log('Successfully generated teams.json with 48 updated teams and rosters!');
-    } catch (e) {
-      console.error('Error parsing/writing JSON:', e.message);
-    }
+    team.plantilla = newPlantilla;
+    return team;
   });
-}).on('error', (e) => {
-  console.error('HTTP GET Error:', e.message);
-});
+
+  fs.writeFileSync(jsonPath, JSON.stringify(updatedTeams, null, 2));
+  console.log('Successfully updated teams.json with real players for all 48 teams!');
+} catch (e) {
+  console.error('Error updating teams:', e);
+}

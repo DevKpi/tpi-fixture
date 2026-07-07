@@ -84,22 +84,35 @@ class APIService {
         }
       }
       
+      // Normalizador de nombres inconsistentes de la API
+      const normalizeScorers = (scorers) => {
+        if (!scorers || typeof scorers !== 'string') return scorers;
+        return scorers.replace(/Kylian Mbappé/g, 'K. Mbappé');
+      };
+
       // Mapear los partidos a instancias de la clase del modelo Partido
-      return games.map(m => new Partido(
-        m.id,
-        m.home_team_name_en || m.home_team_label,
-        m.away_team_name_en || m.away_team_label,
-        m.local_date,
-        m.stadium_id,
-        '', // arbitro
-        m.home_score,
-        m.away_score,
-        [], // goles list
-        (m.finished === 'TRUE' || m.finished === true || m.finished === 'true') ? 'FINALIZADO' : 'PENDIENTE',
-        m.type,
-        m.group,
-        m
-      ));
+      return games.map(m => {
+        m.home_scorers = normalizeScorers(m.home_scorers);
+        m.away_scorers = normalizeScorers(m.away_scorers);
+        m.home_assists = normalizeScorers(m.home_assists);
+        m.away_assists = normalizeScorers(m.away_assists);
+        
+        return new Partido(
+          m.id,
+          m.home_team_name_en || m.home_team_label,
+          m.away_team_name_en || m.away_team_label,
+          m.local_date,
+          m.stadium_id,
+          '', // arbitro
+          m.home_score,
+          m.away_score,
+          [], // goles list
+          (m.finished === 'TRUE' || m.finished === true || m.finished === 'true') ? 'FINALIZADO' : 'PENDIENTE',
+          m.type,
+          m.group,
+          m
+        );
+      });
     } catch (error) {
       console.error('Error fetching all matches:', error);
       const localMatchesStr = localStorage.getItem('worldcup2026_matches');
@@ -194,7 +207,7 @@ class APIService {
         const isView = window.location.pathname.includes('/views/');
         const path = isView ? '../data/teams.json' : './data/teams.json';
         
-        const response = await fetch(path);
+        const response = await fetch(`${path}?v=${new Date().getTime()}`);
         teamsRaw = await response.json();
 
         if (teamsRaw.length > 0) {
