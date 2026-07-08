@@ -22,10 +22,10 @@ Permite:
 
 ## 👥 Equipo
 
-| Integrante | Rol |
-|---|---|
-| **Thiago**  | UML, datos, vistas, README |
-| **Esteban** | Modelos, controladores, persistencia, tests |
+| Integrante |
+
+| **Thiago** |
+| **Esteban** |
 
 ---
 
