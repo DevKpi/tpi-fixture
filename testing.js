@@ -66,5 +66,3 @@ assertEquals(jugador.nombre, "Lionel Messi");
 assertEquals(jugador.pais, "Argentina");
 assertEquals(jugador.edad, 34);
 assertEquals(jugador.posicion, "Delantero");
-
-
