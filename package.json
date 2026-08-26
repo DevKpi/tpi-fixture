@@ -1,0 +1,9 @@
+﻿{
+  "name": "tpi-fixture",
+  "version": "1.0.0",
+  "description": "Trabajo Practico Integrador - Fixture Mundial FIFA 2026",
+  "type": "module",
+  "scripts": {
+    "test": "node testing.js"
+  }
+}

@@ -312,13 +312,16 @@ class AppController {
 }
 
 // Inicializar la aplicación cuando el DOM esté listo
-document.addEventListener('DOMContentLoaded', async () => {
-  console.log('[App] DOM loaded, iniciando aplicación...');
-  const app = new AppController();
-  await app.init();
-  
-  // Exponer globalmente para acceso desde consola
-  window.app = app;
-});
+if (typeof document !== 'undefined') {
+  document.addEventListener('DOMContentLoaded', async () => {
+    console.log('[App] DOM loaded, iniciando aplicación...');
+    const app = new AppController();
+    await app.init();
+    
+    // Exponer globalmente para acceso desde consola
+    window.app = app;
+  });
+}
 
 export default AppController;
+
