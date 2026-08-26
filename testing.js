@@ -1,3 +1,5 @@
+/* Se pueden ejecutar las pruebas unitarias con npm run test */
+
 // 1. IMPORTACIONES DE TODOS LOS MODELOS
 import Seleccion from './models/CountryTeams.js';
 import Fase from './models/Fase.js';
