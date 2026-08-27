@@ -109,3 +109,29 @@ assertEquals(jugador.rojas, 1);
 jugador.SumarValla();
 assertEquals(jugador.vallasInvictas, 1);
 
+console.log(" ");
+console.log("Pruebas de Grupo - Método EstaCompleto()");
+
+// Grupo con partidos terminados y pendientes
+const grupo1 = new Grupo(1, "Grupo A", [], [{ finished: true }, { finished: false }]);
+assertEquals(grupo1.EstaCompleto(), false);
+
+// Grupo con todos sus partidos terminados
+const grupo2 = new Grupo(2, "Grupo B", [], [{ finished: true }, { finished: true }]);
+assertEquals(grupo2.EstaCompleto(), true);
+
+// Grupo sin ningún partido jugado todavía
+const grupo3 = new Grupo(3, "Grupo C", [], [{ finished: false }, { finished: false }]);
+assertEquals(grupo3.EstaCompleto(), false);
+
+// Grupo con 1 solo partido y ya finalizado (1 de 1)
+const grupo4 = new Grupo(4, "Grupo D", [], [{ finished: true }]);
+assertEquals(grupo4.EstaCompleto(), true);
+
+//Grupo donde falta solo un partido por jugar (2 de 3)
+const grupo5 = new Grupo(5, "Grupo E", [], [{ finished: true }, { finished: true }, { finished: false }]);
+assertEquals(grupo5.EstaCompleto(), false);
+
+// Grupo sin partidos asignados (lista vacía)
+const grupo6 = new Grupo(6, "Grupo F", [], []);
+assertEquals(grupo6.EstaCompleto(), false);
